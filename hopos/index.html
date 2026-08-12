@@ -10,7 +10,7 @@
 <meta property="og:url" content="https://gethop.org/hopos/">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=6">
+<link rel="stylesheet" href="/style.css?v=7">
 </head>
 <body class="pg-hopos">
 
@@ -137,7 +137,7 @@
       <div class="rung-split">that is the <b>headless</b> image — the GUI flavour is <b>opt-in</b>, on top</div>
     </div>
     <p class="ladder-sub">the node you boot: <b>~17,000 lines of our own code</b> — Altra ~10,150 + 6,875 lean · the €15 board ~9,475 + the same lean</p>
-    <p style="margin-top: 24px;">A Linux node doing the same job trusts GRUB, the kernel (~30,000,000 lines), systemd, libc <em>and</em> a container runtime. <strong>HopOS is the whole node — bootloader, TCP/IP stack, TLS and HTTP included — in ~17,000.</strong> What is <em>not</em> ours in the image has shrunk to the tamago runtime and a CA-roots bundle: the netstack, TLS, HTTP, DHCP, the S3 client and the ELF loader are <strong>lean</strong>, written here — no gVisor, no forks. No node ever links two boards or two instruction sets: whatever you boot is <em>portable + one ISA + one board + lean</em>, so <strong>a node fits in a single AI context window</strong> and you can audit the machine you actually booted in one sitting, human or machine.</p>
+    <p style="margin-top: 24px;">A Linux node doing the same job trusts GRUB, the kernel (~30,000,000 lines), systemd, libc <em>and</em> a container runtime. <strong>HopOS is the whole node — bootloader, TCP/IP stack, TLS and HTTP included — in ~17,000.</strong> What is <em>not</em> ours in the image has shrunk to the tamago runtime and a CA-roots bundle: the netstack, TLS, HTTP, DHCP, the S3 client and the ELF loader are <strong>lean</strong>, written here — no gVisor, no forks. No node ever links two boards or two instruction sets: whatever you boot is <em>portable + one ISA + one board + lean</em>, so <strong>a node fits in a single AI context window</strong> and you can audit the machine you actually booted in one sitting, human or machine. Put <a href="/hop/">HOP</a> on top — ~5,000 lines — and the whole platform is <strong>~22,000</strong>: OS, orchestrator, dependencies, done.</p>
     <p style="margin-top: 18px;"><strong>The board rung is where new hardware lands — the core stays put.</strong> Five boards so far and every one weighs in around those ~2,000 lines. Even the Radxa Zero 3E fits, and its firmware lights neither the NIC nor the HDMI connector: the GMAC and PHY sit in its board rung, the scanout in the GUI flavour — a headless image links <em>zero</em> graphics. Of the whole port, about <em>fifty</em> lines touched the portable core. Supporting a new board is a driver problem, not an OS problem.</p>
     <div class="honest">
       <h3>HopOS does less. On purpose.</h3>

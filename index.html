@@ -10,7 +10,7 @@
 <meta property="og:url" content="https://gethop.org">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=6">
+<link rel="stylesheet" href="/style.css?v=7">
 </head>
 <body>
 
@@ -36,6 +36,15 @@
         <span class="go">read the HOP story →</span>
       </a>
     </div>
+    <!-- Gemeten met tools/loc.go (HopOS-repo) op v1.15.0: metal 10.137 ·
+         hop 5.253 (hoplock ~850 hoort bij die kant) · lean 6.879. Daarbuiten
+         linkt alleen de Go/tamago-runtime en de CA-bundel. -->
+    <div class="trio">
+      <div><span class="tn">~10,000</span><span class="tl">lines — the OS, everything that boots the machine</span></div>
+      <div><span class="tn">~5,000</span><span class="tl">lines — the orchestrator, one binary runs the cluster</span></div>
+      <div><span class="tn">~6,900</span><span class="tl">lines — <b>all dependencies</b>: lean, a stdlib written here</span></div>
+    </div>
+    <p class="trio-foot">the whole platform in ~22,000 readable lines — beyond them, only the Go runtime and a CA bundle</p>
     <a class="banner" href="/surf/">
       <span class="banner-name">SURF</span>
       <span class="banner-sub">The GUI for HopOS</span>

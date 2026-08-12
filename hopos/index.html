@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HopOS — the Go-only OS. No kernel between your app and the hardware.</title>
-<meta name="description" content="HopOS: a ~9 MB signed image is the entire node. No Linux. Every Go app runs on its own physical cores behind a hardware cage, on ARM and RISC-V — security by subtraction.">
+<meta name="description" content="HopOS: a ~6 MB signed image is the entire node. No Linux. Every Go app runs on its own physical cores behind a hardware cage, on ARM and RISC-V — security by subtraction.">
 <meta property="og:title" content="HopOS — the Go-only OS">
 <meta property="og:description" content="No kernel between your app and the hardware. Your core count is your headroom — from a €15 RISC-V board to a 128-core Ampere Altra.">
 <meta property="og:url" content="https://gethop.org/hopos/">
@@ -32,7 +32,7 @@
     <div>
       <p class="pg-mark">HopOS · the Go-only OS</p>
       <h1>No kernel between your app and the hardware.</h1>
-      <p class="lede">A <strong>~9 MB signed image on a USB stick is the entire node</strong>. It boots a <strong>128-core Ampere Altra</strong>, any other UEFI arm64 box, a Raspberry Pi, a <strong>Radxa Zero 3E</strong> or a <strong>€15 RISC-V board</strong>, and runs each Go app on its <strong>own physical cores</strong>, inside its own memory cage. <strong>Your core count is your headroom</strong> — one design, one job spec, from that €15 board to 127 caged app cores.</p>
+      <p class="lede">A <strong>~6 MB signed image on a USB stick is the entire node</strong>. It boots a <strong>128-core Ampere Altra</strong>, any other UEFI arm64 box, a Raspberry Pi, a <strong>Radxa Zero 3E</strong> or a <strong>€15 RISC-V board</strong>, and runs each Go app on its <strong>own physical cores</strong>, inside its own memory cage. <strong>Your core count is your headroom</strong> — one design, one job spec, from that €15 board to 127 caged app cores.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#download">download HopOS →</a>
         <a class="btn btn-ghost" href="#quickstart">boot one in a minute</a>
@@ -46,7 +46,7 @@
 <span class="boot-line" style="animation-delay:.2s">   o_(")(")   --------------</span>
 <span class="boot-line" style="animation-delay:.2s">              the Go-only OS</span>
 <span class="boot-line" style="animation-delay:.9s"> </span>
-<span class="boot-line dim" style="animation-delay:.9s">image: ~9 MB, signed — OS, drivers, orchestrator</span>
+<span class="boot-line dim" style="animation-delay:.9s">image: ~6 MB, signed — OS, drivers, orchestrator</span>
 <span class="boot-line dim" style="animation-delay:1.4s">memory: 384 GiB pool · 126 available cores</span>
 <span class="boot-line dim" style="animation-delay:1.9s">net: igb link 1000Mbps · hwmon: SoC 45.0C</span>
 <span class="boot-line dim" style="animation-delay:2.4s">hop: agent starting — node altra-1 · HOPOS_AGENT_UP</span>
@@ -132,16 +132,16 @@
            +401 rpi4 · +13 rpi5. lean = 6.879, identiek in elke smaak.
            Volledige tabel: docs/technical/isolation.md. -->
       <div class="rung rung-board"><span class="lbl"><b>your board</b> — its NIC and PHY drivers</span><span class="bar"><i style="width:29%"></i></span><span class="n">~2,000</span></div>
-      <div class="rung-split">…plus <b>lean</b>, the node’s own standard library — a separate module, identical in every node:</div>
+      <div class="rung-split">…plus <b>all dependencies</b> — lean, the standard library written here, identical in every node:</div>
       <div class="rung rung-arch"><span class="lbl"><b>lean</b> — TCP/IP, TLS, HTTP(S), DHCP, S3, ELF</span><span class="bar"><i style="width:100%"></i></span><span class="n">~6,875</span></div>
       <div class="rung-split">that is the <b>headless</b> image — the GUI flavour is <b>opt-in</b>, on top</div>
     </div>
-    <p class="ladder-sub">the node you boot: <b>~17,000 lines of our own code</b> — Altra ~10,150 + 6,875 lean · the €15 board ~9,475 + the same lean</p>
-    <p style="margin-top: 24px;">A Linux node doing the same job trusts GRUB, the kernel (~30,000,000 lines), systemd, libc <em>and</em> a container runtime. <strong>HopOS is the whole node — bootloader, TCP/IP stack, TLS and HTTP included — in ~17,000.</strong> What is <em>not</em> ours in the image has shrunk to the tamago runtime and a CA-roots bundle: the netstack, TLS, HTTP, DHCP, the S3 client and the ELF loader are <strong>lean</strong>, written here — no gVisor, no forks. No node ever links two boards or two instruction sets: whatever you boot is <em>portable + one ISA + one board + lean</em>, so <strong>a node fits in a single AI context window</strong> and you can audit the machine you actually booted in one sitting, human or machine. Put <a href="/hop/">HOP</a> on top — ~5,000 lines — and the whole platform is <strong>~22,000</strong>: OS, orchestrator, dependencies, done.</p>
+    <p class="ladder-sub">the node you boot: Altra <b>~10,150</b> · the €15 board <b>~9,475</b> — plus <b>~7,000</b> of dependencies, every line of them written here</p>
+    <p style="margin-top: 24px;">A Linux node doing the same job trusts GRUB, the kernel (~30,000,000 lines), systemd, libc <em>and</em> a container runtime — and that thirty-million number shows <em>none</em> of the dependencies you still need on top of it. <strong>HopOS is the whole node — bootloader included — in ~10,000 lines: an AI audits the machine you actually booted in one sitting.</strong> And here the dependency story is shown, not hidden: <em>all</em> of them together are <strong>~7,000 lines</strong> — <strong>lean</strong>, the standard library written here (TCP/IP, TLS, HTTP, DHCP, S3, ELF), readable the same way. Beyond that, only the tamago runtime and a CA bundle: no gVisor, no forks. No node ever links two boards or two instruction sets — whatever you boot is <em>portable + one ISA + one board</em>.</p>
     <p style="margin-top: 18px;"><strong>The board rung is where new hardware lands — the core stays put.</strong> Five boards so far and every one weighs in around those ~2,000 lines. Even the Radxa Zero 3E fits, and its firmware lights neither the NIC nor the HDMI connector: the GMAC and PHY sit in its board rung, the scanout in the GUI flavour — a headless image links <em>zero</em> graphics. Of the whole port, about <em>fifty</em> lines touched the portable core. Supporting a new board is a driver problem, not an OS problem.</p>
     <div class="honest">
       <h3>HopOS does less. On purpose.</h3>
-      <p>It runs <b>Go applications, compiled for HopOS</b> — no containers, no other languages, no general-purpose anything. That narrowness is where the isolation and the ~9 MB come from. Need Docker images or non-Go services? Run <a href="/hop/">HOP with its exec and Docker drivers</a> on a Linux box in the same cluster, and keep HopOS for the apps that deserve the metal.</p>
+      <p>It runs <b>Go applications, compiled for HopOS</b> — no containers, no other languages, no general-purpose anything. That narrowness is where the isolation and the ~6 MB come from. Need Docker images or non-Go services? Run <a href="/hop/">HOP with its exec and Docker drivers</a> on a Linux box in the same cluster, and keep HopOS for the apps that deserve the metal.</p>
       <p style="margin-top: 14px;"><b>Only Go?</b> Mostly. On your own machine, <a href="https://github.com/xinix00/GoNet">GoNet</a> runs .NET in pure Go on wazero, with no .NET runtime installed — an experiment, and the test suites of two production repos run green through it.</p>
     </div>
   </div>

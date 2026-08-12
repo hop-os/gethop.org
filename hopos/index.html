@@ -111,30 +111,33 @@
 <section id="loc">
   <div class="wrap">
     <h2>Small enough to actually read</h2>
-    <p class="section-lede">Lines of code, excluding tests, comments and blanks — counted <strong>the way the compiler sees it</strong>, by <a href="https://github.com/xinix00/HopOS/blob/main/tools/loc.go">a script</a> that runs <code>go list</code> per release image. A file that only links for one instruction set or one board counts only there; example apps, probes and dev targets don’t ride along. <strong>If it isn’t in the image you boot, it isn’t in the number.</strong> The rung you have to <em>trust</em> is the first one; the board rung — its NIC, PHY and display drivers included — is a swappable outer shell, already outside every cage.</p>
+    <p class="section-lede">Lines of code, excluding tests, comments and blanks — counted <strong>the way the compiler sees it</strong>, by <a href="https://github.com/xinix00/HopOS/blob/main/tools/loc.go">a script</a> that runs <code>go list</code> per release image. A file that only links for one instruction set or one board counts only there; example apps, probes and dev targets don’t ride along. <strong>If it isn’t in the image you boot, it isn’t in the number</strong> — and if it is ours and in the image, it is: <strong>lean</strong>, the node’s own standard library, counts as its own rung. The rung you have to <em>trust</em> is the first one; the board rung is a swappable outer shell, already outside every cage.</p>
     <div class="ladder" role="img" aria-label="HopOS code size in lines: portable layers, then one instruction set, then one board">
-      <div class="rung"><span class="lbl"><b>isolation core</b> — cages, slots, ABI, object store</span><span class="bar"><i style="width:100%"></i></span><span class="n">~3,750</span></div>
-      <div class="rung"><span class="lbl">app runtime + node mains</span><span class="bar"><i style="width:11%"></i></span><span class="n">~425</span></div>
-      <div class="rung"><span class="lbl">network stack — switch, NAT, DHCP</span><span class="bar"><i style="width:32%"></i></span><span class="n">~1,200</span></div>
-      <div class="rung"><span class="lbl">portable drivers — console, NVMe, PCIe</span><span class="bar"><i style="width:23%"></i></span><span class="n">~875</span></div>
-      <div class="rung"><span class="lbl">boot config + the board contract</span><span class="bar"><i style="width:4%"></i></span><span class="n">~150</span></div>
-      <div class="rung-split">portable Go — in every node: <b>~6,400 lines</b> — then pick one instruction set:</div>
-      <div class="rung rung-arch"><span class="lbl"><b>arm64</b> — EL2 + stage-2, PSCI, SMP</span><span class="bar"><i style="width:33%"></i></span><span class="n">~1,250</span></div>
-      <div class="rung rung-arch"><span class="lbl"><b>riscv64</b> — machine mode + PMP cage, slot stub</span><span class="bar"><i style="width:33%"></i></span><span class="n">~1,225</span></div>
+      <div class="rung"><span class="lbl"><b>isolation core</b> — cages, slots, ABI, object store</span><span class="bar"><i style="width:55%"></i></span><span class="n">~3,775</span></div>
+      <div class="rung"><span class="lbl">app runtime + node mains</span><span class="bar"><i style="width:7%"></i></span><span class="n">~500</span></div>
+      <div class="rung"><span class="lbl">network stack — switch, NAT, DHCP</span><span class="bar"><i style="width:18%"></i></span><span class="n">~1,250</span></div>
+      <div class="rung"><span class="lbl">portable drivers — console, NVMe, PCIe</span><span class="bar"><i style="width:13%"></i></span><span class="n">~875</span></div>
+      <div class="rung"><span class="lbl">boot config + the board contract</span><span class="bar"><i style="width:2%"></i></span><span class="n">~150</span></div>
+      <div class="rung-split">portable Go — in every node: <b>~6,550 lines</b> — then pick one instruction set:</div>
+      <div class="rung rung-arch"><span class="lbl"><b>arm64</b> — EL2 + stage-2, PSCI, SMP</span><span class="bar"><i style="width:18%"></i></span><span class="n">~1,250</span></div>
+      <div class="rung rung-arch"><span class="lbl"><b>riscv64</b> — machine mode + PMP cage, slot stub</span><span class="bar"><i style="width:17%"></i></span><span class="n">~1,200</span></div>
       <div class="rung-split">…and exactly one board — <b>drivers included</b>, all of it outside every cage:</div>
       <!-- Afspraak: boards krijgen GEEN eigen rij — een board weegt ~2.000
            regels en dat getal hanteren we hier, anders groeit deze ladder
            per bord. De echte nummers per board, uit `go run tools/loc.go`
-           (HopOS-repo, cwd metal/), op v1.12.0:
-             uefi/Altra 2.337 · rpi5 2.313 · rpi4 1.880 · rk3566 2.444 · licheerv 1.727
+           (HopOS-repo, cwd metal/), op v1.15.0:
+             uefi/Altra 2.336 · rpi5 2.315 · rpi4 1.882 · rk3566 2.411 · licheerv 1.730
            De gui-smaak telt apart: +2.011 gedeeld (fbgrant + USB-invoer:
            xHCI/DWC3/HID), board-bedrading +937 rk3566 (scanout) ·
-           +401 rpi4 · +13 rpi5. Volledige tabel: docs/technical/isolation.md. -->
-      <div class="rung rung-board"><span class="lbl"><b>your board</b> — its NIC and PHY drivers</span><span class="bar"><i style="width:53%"></i></span><span class="n">~2,000</span></div>
+           +401 rpi4 · +13 rpi5. lean = 6.879, identiek in elke smaak.
+           Volledige tabel: docs/technical/isolation.md. -->
+      <div class="rung rung-board"><span class="lbl"><b>your board</b> — its NIC and PHY drivers</span><span class="bar"><i style="width:29%"></i></span><span class="n">~2,000</span></div>
+      <div class="rung-split">…plus <b>lean</b>, the node’s own standard library — a separate module, identical in every node:</div>
+      <div class="rung rung-arch"><span class="lbl"><b>lean</b> — TCP/IP, TLS, HTTP(S), DHCP, S3, ELF</span><span class="bar"><i style="width:100%"></i></span><span class="n">~6,875</span></div>
       <div class="rung-split">that is the <b>headless</b> image — the GUI flavour is <b>opt-in</b>, on top</div>
     </div>
-    <p class="ladder-sub">the node you boot: Altra <b>~10,000</b> · the €15 RISC-V board <b>~9,350</b> — always portable + one ISA + one board</p>
-    <p style="margin-top: 24px;">A Linux node doing the same job trusts GRUB, the kernel (~30,000,000 lines), systemd, libc <em>and</em> a container runtime. <strong>HopOS is the whole node — bootloader included — in ~10,000.</strong> No node ever links two boards or two instruction sets: whatever you boot is <em>portable + one ISA + one board</em>, so <strong>a node fits in a single AI context window</strong> and you can audit the machine you actually booted in one sitting, human or machine.</p>
+    <p class="ladder-sub">the node you boot: <b>~17,000 lines of our own code</b> — Altra ~10,150 + 6,875 lean · the €15 board ~9,475 + the same lean</p>
+    <p style="margin-top: 24px;">A Linux node doing the same job trusts GRUB, the kernel (~30,000,000 lines), systemd, libc <em>and</em> a container runtime. <strong>HopOS is the whole node — bootloader, TCP/IP stack, TLS and HTTP included — in ~17,000.</strong> What is <em>not</em> ours in the image has shrunk to the tamago runtime and a CA-roots bundle: the netstack, TLS, HTTP, DHCP, the S3 client and the ELF loader are <strong>lean</strong>, written here — no gVisor, no forks. No node ever links two boards or two instruction sets: whatever you boot is <em>portable + one ISA + one board + lean</em>, so <strong>a node fits in a single AI context window</strong> and you can audit the machine you actually booted in one sitting, human or machine.</p>
     <p style="margin-top: 18px;"><strong>The board rung is where new hardware lands — the core stays put.</strong> Five boards so far and every one weighs in around those ~2,000 lines. Even the Radxa Zero 3E fits, and its firmware lights neither the NIC nor the HDMI connector: the GMAC and PHY sit in its board rung, the scanout in the GUI flavour — a headless image links <em>zero</em> graphics. Of the whole port, about <em>fifty</em> lines touched the portable core. Supporting a new board is a driver problem, not an OS problem.</p>
     <div class="honest">
       <h3>HopOS does less. On purpose.</h3>

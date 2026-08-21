@@ -113,31 +113,31 @@
     <h2>Small enough to actually read</h2>
     <p class="section-lede">Lines of code, excluding tests, comments and blanks — counted <strong>the way the compiler sees it</strong>, by <a href="https://github.com/xinix00/HopOS/blob/main/tools/loc.go">a script</a> that runs <code>go list</code> per release image: <strong>if it isn’t in the image you boot, it isn’t in the number.</strong> The rung you have to <em>trust</em> is the first one.</p>
     <div class="ladder" role="img" aria-label="HopOS code size in lines: portable layers, then one instruction set, then one board">
-      <div class="rung"><span class="lbl"><b>isolation core</b> — cages, slots, ABI, object store</span><span class="bar"><i style="width:55%"></i></span><span class="n">~3,775</span></div>
-      <div class="rung"><span class="lbl">app runtime + node mains</span><span class="bar"><i style="width:7%"></i></span><span class="n">~500</span></div>
-      <div class="rung"><span class="lbl">network stack — switch, NAT, DHCP</span><span class="bar"><i style="width:18%"></i></span><span class="n">~1,250</span></div>
-      <div class="rung"><span class="lbl">portable drivers — console, NVMe, PCIe</span><span class="bar"><i style="width:13%"></i></span><span class="n">~875</span></div>
+      <div class="rung"><span class="lbl"><b>isolation core</b> — cages, slots, ABI, object store</span><span class="bar"><i style="width:38%"></i></span><span class="n">~4,025</span></div>
+      <div class="rung"><span class="lbl">app runtime + node mains</span><span class="bar"><i style="width:5%"></i></span><span class="n">~525</span></div>
+      <div class="rung"><span class="lbl">network stack — switch, NAT, DHCP, IPv6</span><span class="bar"><i style="width:14%"></i></span><span class="n">~1,475</span></div>
+      <div class="rung"><span class="lbl">portable drivers — console, NVMe, PCIe</span><span class="bar"><i style="width:8%"></i></span><span class="n">~875</span></div>
       <div class="rung"><span class="lbl">boot config + the board contract</span><span class="bar"><i style="width:2%"></i></span><span class="n">~150</span></div>
-      <div class="rung-split">portable Go — in every node: <b>~6,550 lines</b> — then pick one instruction set:</div>
-      <div class="rung rung-arch"><span class="lbl"><b>arm64</b> — EL2 + stage-2, PSCI, SMP</span><span class="bar"><i style="width:18%"></i></span><span class="n">~1,250</span></div>
-      <div class="rung rung-arch"><span class="lbl"><b>riscv64</b> — machine mode + PMP cage, slot stub</span><span class="bar"><i style="width:17%"></i></span><span class="n">~1,200</span></div>
+      <div class="rung-split">portable Go — in every node: <b>~7,050 lines</b> — then pick one instruction set:</div>
+      <div class="rung rung-arch"><span class="lbl"><b>arm64</b> — EL2 + stage-2, PSCI, SMP</span><span class="bar"><i style="width:12%"></i></span><span class="n">~1,250</span></div>
+      <div class="rung rung-arch"><span class="lbl"><b>riscv64</b> — machine mode + PMP cage, slot stub</span><span class="bar"><i style="width:13%"></i></span><span class="n">~1,350</span></div>
       <div class="rung-split">…and exactly one board — <b>drivers included</b>, all of it outside every cage:</div>
       <!-- Afspraak: boards krijgen GEEN eigen rij — een board weegt ~2.000
            regels en dat getal hanteren we hier, anders groeit deze ladder
            per bord. De echte nummers per board, uit `go run tools/loc.go`
-           (HopOS-repo, cwd metal/), op v1.15.0:
-             uefi/Altra 2.336 · rpi5 2.315 · rpi4 1.882 · rk3566 2.411 · licheerv 1.730
-           De gui-smaak telt apart: +2.011 gedeeld (fbgrant + USB-invoer:
+           (HopOS-repo, cwd metal/), op v1.99.1:
+             uefi/Altra 2.336 · rpi5 2.326 · rpi4 1.893 · rk3566 2.411 · licheerv 1.848
+           De gui-smaak telt apart: +2.155 gedeeld (fbgrant + USB-invoer:
            xHCI/DWC3/HID), board-bedrading +937 rk3566 (scanout) ·
-           +401 rpi4 · +13 rpi5. lean = 6.879, identiek in elke smaak.
+           +401 rpi4 · +13 rpi5. lean = 10.684, identiek in elke smaak.
            Volledige tabel: docs/technical/isolation.md. -->
-      <div class="rung rung-board"><span class="lbl"><b>your board</b> — its NIC and PHY drivers</span><span class="bar"><i style="width:29%"></i></span><span class="n">~2,000</span></div>
+      <div class="rung rung-board"><span class="lbl"><b>your board</b> — its NIC and PHY drivers</span><span class="bar"><i style="width:19%"></i></span><span class="n">~2,000</span></div>
       <div class="rung-split">…plus <b>all dependencies</b> — lean, the standard library written here, identical in every node:</div>
-      <div class="rung rung-arch"><span class="lbl"><b>lean</b> — TCP/IP, TLS, HTTP(S), DHCP, S3, ELF</span><span class="bar"><i style="width:100%"></i></span><span class="n">~6,875</span></div>
+      <div class="rung rung-arch"><span class="lbl"><b>lean</b> — TCP/IP + IPv6, TLS, HTTP/1+2, DHCP, S3, ELF</span><span class="bar"><i style="width:100%"></i></span><span class="n">~10,700</span></div>
       <div class="rung-split">that is the <b>headless</b> image — the GUI flavour is <b>opt-in</b>, on top</div>
     </div>
-    <p class="ladder-sub">the node you boot: Altra <b>~10,150</b> · the €15 board <b>~9,475</b> — plus <b>~7,000</b> of dependencies, every line of them written here</p>
-    <p style="margin-top: 24px;">A Linux node doing the same job trusts GRUB, the kernel (~30,000,000 lines), systemd, libc <em>and</em> a container runtime — and that thirty-million number shows <em>none</em> of the dependencies you still need on top of it. <strong>HopOS is the whole node — bootloader included — in ~10,000 lines: an AI audits the machine you actually booted in one sitting.</strong> And here the dependency story is shown, not hidden: <em>all</em> of them together are <strong>~7,000 lines</strong> — <strong>lean</strong>, the standard library written here (TCP/IP, TLS, HTTP, DHCP, S3, ELF), readable the same way. Beyond that, only the tamago runtime and a CA bundle: no gVisor, no forks. No node ever links two boards or two instruction sets — whatever you boot is <em>portable + one ISA + one board</em>.</p>
+    <p class="ladder-sub">the node you boot: Altra <b>~10,650</b> · the €15 board <b>~10,250</b> — plus <b>~10,700</b> of dependencies, every line of them written here</p>
+    <p style="margin-top: 24px;">A Linux node doing the same job trusts GRUB, the kernel (~30,000,000 lines), systemd, libc <em>and</em> a container runtime — and that thirty-million number shows <em>none</em> of the dependencies you still need on top of it. <strong>HopOS is the whole node — bootloader included — in ~10,500 lines: an AI audits the machine you actually booted in one sitting.</strong> And here the dependency story is shown, not hidden: <em>all</em> of them together are <strong>~10,700 lines</strong> — <strong>lean</strong>, the standard library written here (TCP/IP with IPv6, TLS, HTTP/1 and 2, DHCP, S3, ELF), readable the same way. Beyond that, only the tamago runtime and a CA bundle: no gVisor, no forks. No node ever links two boards or two instruction sets — whatever you boot is <em>portable + one ISA + one board</em>.</p>
     <p style="margin-top: 18px;"><strong>The board rung is where new hardware lands — the core stays put.</strong> Every board so far weighs in around those ~2,000 lines, drivers included. Supporting a new board is a driver problem, not an OS problem.</p>
     <div class="honest">
       <h3>HopOS does less. On purpose.</h3>
@@ -154,10 +154,12 @@
     <dl class="apps">
       <div><dt>welcome</dt><dd>A page on port 80 with what the node is running on: cores, RAM partition, architecture, uptime. <b>Ships in the default headless config</b> — <code>http://&lt;node-ip&gt;/</code> is the install check. There is one running at <a href="https://demo.gethop.org">demo.gethop.org</a>.</dd></div>
       <div><dt>cloudflared</dt><dd>Cloudflare’s <b>own</b> <code>tunnel run</code>, unmodified: a node behind NAT, with no inbound port and no kernel, reachable from the internet.</dd></div>
+      <div><dt>cloudflared-lean</dt><dd>The same tunnel, spoken natively on lean’s own HTTP/2: <b>4.4 MB where the CLI is 30</b>. Both ship — the CLI still covers what this one deliberately doesn’t.</dd></div>
       <div><dt>hoplb</dt><dd>Load balancer that takes its routes live from the cluster, streaming-safe for SSE and websockets.</dd></div>
       <div><dt>hopdns</dt><dd>Cluster DNS, so a job can say <code>display.hop.local</code> instead of an address — with static CNAMEs and merged federation queries.</dd></div>
       <div><dt>hopprom</dt><dd>Prometheus exporter with per-job CPU and memory — <b>no agent and no node exporter</b>, because the node already measures every slot.</dd></div>
       <div><dt>vitals</dt><dd>The board doctor: benchmarks a node’s vital signs — sustained CPU with thermals, memory bandwidth and latency, network throughput, scheduler jitter — so a new board compares against a healthy one.</dd></div>
+      <div><dt><a href="https://github.com/xinix00/stulp">stulp</a></dt><dd>A home controller in Go — and the endurance rig: <b>ten plugins pulling and polling for a week on the 256 MB board</b>, without going OOM.</dd></div>
       <div><dt>SURF</dt><dd>Windows, a software compositor and a browser, built on the framebuffer grant. A separate thing that runs on HopOS, not part of it: <a href="/surf/">the tech demo</a>.</dd></div>
     </dl>
     <div class="honest">

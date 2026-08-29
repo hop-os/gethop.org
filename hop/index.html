@@ -103,17 +103,17 @@ linux-2   http://10.0.0.31:8080   19:41:03
 <section>
   <div class="wrap">
     <h2>Small enough to actually read</h2>
-    <p class="section-lede">Lines of code, excluding tests, comments and blanks — rounded so the numbers stay true across builds.</p>
+    <p class="section-lede">Lines of code, excluding tests, comments and blanks — counted <strong>the way the compiler sees it</strong>: what the agent binary links from its own module.</p>
     <div class="ladder" role="img" aria-label="HOP code size per component, in lines">
-      <div class="rung"><span class="lbl"><b>agent &amp; HTTP API</b></span><span class="bar"><i style="width:100%"></i></span><span class="n">~1,800</span></div>
-      <div class="rung"><span class="lbl">runners — exec, Docker, hop</span><span class="bar"><i style="width:89%"></i></span><span class="n">~1,600</span></div>
-      <div class="rung"><span class="lbl">leader &amp; scheduling</span><span class="bar"><i style="width:72%"></i></span><span class="n">~1,300</span></div>
-      <div class="rung"><span class="lbl">shared packages &amp; types</span><span class="bar"><i style="width:25%"></i></span><span class="n">~450</span></div>
+      <div class="rung"><span class="lbl"><b>agent &amp; HTTP API</b></span><span class="bar"><i style="width:100%"></i></span><span class="n">~2,800</span></div>
+      <div class="rung"><span class="lbl">runners — exec, Docker, hop</span><span class="bar"><i style="width:79%"></i></span><span class="n">~2,200</span></div>
+      <div class="rung"><span class="lbl">leader &amp; scheduling</span><span class="bar"><i style="width:67%"></i></span><span class="n">~1,875</span></div>
+      <div class="rung"><span class="lbl">shared packages &amp; types</span><span class="bar"><i style="width:23%"></i></span><span class="n">~650</span></div>
     </div>
-    <p class="ladder-sub">a full cluster in <b>~5,000 lines</b> (the CLI adds ~900) · a kubelet alone is ~700,000</p>
+    <p class="ladder-sub">a full cluster in <b>~7,550 lines</b> (the CLI adds ~950) · a kubelet alone is ~700,000</p>
     <div class="honest">
       <h3>What HOP is not</h3>
-      <p>Not Kubernetes: no CRDs, no operators, no YAML sprawl — and none of the ecosystem either. Will it have bugs? All software does. The difference is the setup: <b>~5,000 KISS lines that fit in a single AI context window</b> — you can audit the entire orchestrator in one sitting, human or machine. It has been <b>running our own production workloads for months</b>. We eat here first.</p>
+      <p>Not Kubernetes: no CRDs, no operators, no YAML sprawl — and none of the ecosystem either. Will it have bugs? All software does. The difference is the setup: <b>~7,550 KISS lines that fit in a single AI context window</b> — you can audit the entire orchestrator in one sitting, human or machine. And its <code>go.mod</code> lists <b>three modules, zero third-party</b> — the same foundation HopOS runs on: lean (~5,000 of it linked) and the ~1,000-line S3 lock. No raft library, no etcd, no web framework, no <code>net/http</code>. It has been <b>running our own production workloads for months</b>. We eat here first.</p>
     </div>
   </div>
 </section>

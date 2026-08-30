@@ -559,7 +559,39 @@ footer pre {
 .fit-card li { position: relative; padding: 8px 0 8px 22px; color: var(--muted); font-size: 15px; }
 .fit-card li::before { content: "—"; position: absolute; left: 0; color: var(--line); }
 .fit-yes li::before { content: "✓"; color: var(--acc); }
-.fit-together { margin-top: 20px; }
+
+.use-modes {
+  display: grid; grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr);
+  align-items: stretch; gap: 0; margin-top: 40px;
+}
+.use-modes article {
+  display: flex; flex-direction: column; min-width: 0; padding: 31px;
+  border: 1px solid var(--line); border-radius: 6px; background: var(--panel-2);
+}
+.use-label {
+  margin: 0 0 15px; color: var(--acc); font-family: var(--mono);
+  font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase;
+}
+.use-modes h3 { margin: 0 0 14px; color: var(--text); font-size: 18px; line-height: 1.45; }
+.use-modes article > p:not(.use-label) { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.7; }
+.use-modes article > small { margin-top: 14px; color: var(--muted); font-family: var(--mono); font-size: 10.5px; }
+.use-or {
+  z-index: 1; align-self: center; justify-self: center; display: grid; place-items: center;
+  width: 38px; height: 38px; margin: 0 -1px; border: 1px solid var(--line);
+  border-radius: 50%; background: var(--bg); color: var(--muted);
+  font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+}
+.use-flow {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center; gap: 8px; margin-top: auto; padding-top: 29px;
+}
+.use-flow span, .use-flow b {
+  min-width: 0; padding: 10px 7px; border: 1px solid var(--line); border-radius: 3px;
+  color: var(--muted); font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+  text-align: center;
+}
+.use-flow b { border-color: var(--acc-dim); color: var(--acc); background: color-mix(in srgb, var(--acc) 6%, var(--panel)); }
+.use-flow i { color: var(--acc); font-family: var(--mono); font-size: 11px; font-style: normal; }
 
 .apps-intro {
   display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
@@ -631,6 +663,8 @@ footer pre {
   .difference-list article { grid-template-columns: 38px 1fr; }
   .difference-result { grid-column: 2; margin-top: -12px; text-align: left; }
   .architecture-copy { grid-template-columns: 1fr; }
+  .use-modes { grid-template-columns: 1fr; gap: 0; }
+  .use-or { margin: -1px 0; }
   .app-shelf { grid-template-columns: 1fr 1fr; }
   .apps-section .hopos-app-shelf { grid-template-columns: 1fr 1fr; }
   .hopos-app-shelf div:last-child { grid-column: 1 / -1; }

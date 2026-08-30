@@ -100,7 +100,7 @@
           <span class="difference-no">02</span>
           <div>
             <h3>Keep dependencies visible.</h3>
-            <p>Lean contains the network stack, TLS, HTTP, S3 and ELF support in one readable Go module. It can be the only library dependency of a HopOS app; it does not have to be — ordinary Go packages remain your choice.</p>
+            <p><a href="https://github.com/xinix00/lean">Lean</a> contains the network stack, TLS, HTTP, S3 and ELF support in one readable Go module. It can be the only library dependency of a HopOS app; it does not have to be — ordinary Go packages remain your choice.</p>
           </div>
           <p class="difference-result">no dependency pile</p>
         </article>
@@ -160,33 +160,33 @@
     </div>
   </section>
 
-  <section id="fit">
+  <section id="fit" class="use-section">
     <div class="wrap">
-      <p class="section-kicker">The useful constraint</p>
-      <h2>HopOS does less. On purpose.</h2>
-      <div class="fit-grid">
-        <div class="fit-card fit-yes">
-          <p class="fit-label">A good fit</p>
-          <ul>
-            <li>Go services that deserve dedicated resources</li>
-            <li>Edge boxes and single-purpose appliances</li>
-            <li>Small clusters that should be replaceable, not maintained by hand</li>
-            <li>Workloads where a reviewable stack matters</li>
-          </ul>
-        </div>
-        <div class="fit-card">
-          <p class="fit-label">Not what it is</p>
-          <ul>
-            <li>Not a Linux distribution</li>
-            <li>Not a Docker or Kubernetes replacement</li>
-            <li>Not a general-purpose desktop</li>
-            <li>Not a place for state that exists on only one machine</li>
-          </ul>
-        </div>
-      </div>
-      <div class="together fit-together">
-        <p><b>Need both?</b> A HOP cluster can mix HopOS nodes with Linux machines. Run caged Go apps on HopOS and keep Docker or non-Go workloads on Linux, behind the same job API.</p>
-        <a class="btn btn-ghost" href="/hop/" style="--acc-dim: var(--copper-dim)">meet HOP →</a>
+      <p class="section-kicker">One OS, two ways to use it</p>
+      <h2>Boot your own programs. Or give a fleet one shared state.</h2>
+
+      <div class="use-modes">
+        <article>
+          <p class="use-label">one machine</p>
+          <h3>Put your programs on it and power on.</h3>
+          <p>Jobs in <a href="/hopos/docs/#config"><code>hopos.init[]</code></a> live on the boot medium. Without S3, every boot is clean: HopOS starts that exact set of Go apps again.</p>
+          <div class="use-flow" aria-label="The boot medium starts HopOS, which starts your apps">
+            <span>boot medium</span><i>→</i><b>HopOS</b><i>→</i><span>your apps</span>
+          </div>
+          <small>no S3 · no cluster required</small>
+        </article>
+
+        <div class="use-or" aria-hidden="true">or</div>
+
+        <article>
+          <p class="use-label">a fleet</p>
+          <h3>Keep the truth outside every machine.</h3>
+          <p>HOP commits the desired cluster state to one object in S3. Each HopOS node reads that shared state and reconstructs its own jobs after a reboot.</p>
+          <div class="use-flow" aria-label="HOP commits shared state to S3 for every HopOS node">
+            <span>HOP</span><i>→</i><b>S3 state</b><i>→</i><span>every node</span>
+          </div>
+          <small>shared state · replaceable machines</small>
+        </article>
       </div>
     </div>
   </section>
@@ -321,6 +321,23 @@
   </div>
   <div class="wrap"><p class="foot-copy">© 2026 gethop.org</p></div>
 </footer>
+
+<script>
+(() => {
+  const architecture = document.getElementById('architecture');
+  if (!architecture) return;
+
+  const revealArchitecture = () => {
+    if (location.hash === '#architecture') architecture.open = true;
+  };
+
+  document.querySelectorAll('a[href="#architecture"]').forEach(link => {
+    link.addEventListener('click', () => { architecture.open = true; });
+  });
+  window.addEventListener('hashchange', revealArchitecture);
+  revealArchitecture();
+})();
+</script>
 
 </body>
 </html>

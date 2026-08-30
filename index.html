@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>gethop.org — HopOS, the Go-only OS · HOP, the orchestrator</title>
-<meta name="description" content="Two small pieces for people who run their own metal: HopOS, an OS with no kernel between your app and the hardware — and HOP, a single-binary job orchestrator.">
-<meta property="og:title" content="gethop.org — HopOS · HOP">
-<meta property="og:description" content="HopOS: the Go-only OS, hardware isolation per app, on ARM and RISC-V. HOP: a single-binary orchestrator for processes, containers and whole machines.">
+<title>gethop.org — HopOS · HOP · SURF</title>
+<meta name="description" content="Three small things for people who run their own metal: HopOS runs Go directly on hardware, HOP orchestrates the cluster, and SURF puts windows from many machines on one screen.">
+<meta property="og:title" content="gethop.org — HopOS · HOP · SURF">
+<meta property="og:description" content="A Go-only OS, a small orchestrator, and a distributed GUI tech demo built on both.">
 <meta property="og:url" content="https://gethop.org">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=7">
+<link rel="stylesheet" href="/style.css?v=11">
 </head>
 <body>
 
@@ -20,30 +20,24 @@
       <pre>   (\(\
    ( -.-)
    o_(")(")</pre>
-      <p><strong>Two small pieces for people who run their own metal.</strong> Use either on its own — together they replace a whole platform.</p>
+      <p><strong>Three small things for people who run their own metal.</strong> HopOS and HOP work alone or together. SURF shows what the combination can do.</p>
     </div>
     <div class="doors">
       <a class="door door-hopos" href="/hopos/">
         <div class="name">HopOS</div>
         <div class="role">The Go-only OS</div>
         <p>An operating system that is <b>only your application</b>: no Linux, no containers, no kernel in front of the hardware. By default every app gets whole cores behind a silicon cage — on <b>ARM and RISC-V</b>, from a €15 board to a 128-core Ampere Altra.</p>
+        <span class="door-fact">~11,300 LOC · the whole OS</span>
         <span class="go">read the HopOS story →</span>
       </a>
       <a class="door door-hop" href="/hop/">
         <div class="name">HOP</div>
         <div class="role">The orchestrator</div>
         <p>A <b>single binary</b> that runs everything — processes, containers, and whole machines on HopOS. Leader, agent and API in one process; state in any S3 bucket.</p>
+        <span class="door-fact">~7,550 LOC · the whole orchestrator</span>
         <span class="go">read the HOP story →</span>
       </a>
     </div>
-    <!-- Gemeten met tools/loc.go (HopOS-repo) op v1.99.2: metal 11.312 ·
-         lean 10.684. HOP staat op /hop/ als ~7.550 (gemeten) — hier verkopen we
-         het OS. Daarbuiten linkt alleen de Go/tamago-runtime en de CA-bundel. -->
-    <div class="trio">
-      <div><span class="tn">~11,300</span><span class="tl">lines — <b>the whole OS</b>: an AI audits it in one sitting</span></div>
-      <div><span class="tn">~10,700</span><span class="tl">lines — <b>all dependencies</b>: lean, a standard library written here</span></div>
-    </div>
-    <p class="trio-foot">Linux’s 30,000,000 shows none of the dependencies you still need on top — here even the dependencies are readable</p>
     <a class="banner" href="/surf/">
       <span class="banner-name">SURF</span>
       <span class="banner-sub">The GUI for HopOS</span>

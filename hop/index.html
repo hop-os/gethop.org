@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HOP — the orchestrator. One binary runs the cluster.</title>
-<meta name="description" content="HOP: a single-binary job orchestrator. Processes, containers and whole machines; leader, agent and API in one process; cluster state in any S3 bucket.">
-<meta property="og:title" content="HOP — the orchestrator">
-<meta property="og:description" content="One binary runs the cluster: exec, Docker and bare-metal HopOS workloads. State in S3 — nodes reload their own jobs after a reboot.">
+<title>HOP — a small orchestrator for the machines you already have</title>
+<meta name="description" content="HOP turns Linux, macOS and HopOS machines into one small cluster. One Go binary schedules processes, Docker containers and bare-metal Go apps, with state in S3.">
+<meta property="og:title" content="HOP — the small orchestrator">
+<meta property="og:description" content="One binary. Three workload types. Cluster state in any S3 bucket.">
 <meta property="og:url" content="https://gethop.org/hop/">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=7">
+<link rel="stylesheet" href="/style.css?v=10">
 </head>
-<body class="pg-hop">
+<body class="pg-hop hop-overview">
 
 <nav class="topbar">
   <div class="wrap topbar-in">
@@ -20,6 +20,8 @@
     <input type="checkbox" id="menu" class="menu-box">
     <label for="menu" class="menu-btn" aria-label="menu">≡</label>
     <div class="topnav">
+      <a href="#different">why HOP</a>
+      <a href="#workloads">workloads</a>
       <a href="#download">download</a>
       <a href="/hop/docs/">docs</a>
       <a class="other-hopos" href="/hopos/">HopOS · the Go-only OS →</a>
@@ -27,141 +29,238 @@
   </div>
 </nav>
 
-<header class="hero">
+<header class="hero hop-hero">
   <div class="wrap hero-grid">
     <div>
       <p class="pg-mark">HOP · the orchestrator</p>
-      <h1>One binary runs the cluster.</h1>
-      <p class="lede">Agent, leader and HTTP API in <strong>one Go binary — no database, no sidecars</strong>. Jobs with health checks, restarts and priorities; an HMAC-signed API; leader election on a CAS lock with cluster state in <strong>any S3 bucket</strong> — a node that reboots brings its own jobs back. And it runs <strong>every kind of workload</strong>: processes, containers, whole machines.</p>
+      <h1>Run your machines as one small cluster.</h1>
+      <p class="lede">HOP is <strong>one Go binary</strong> that schedules plain processes, Docker containers and bare-metal HopOS apps. Every node can be agent, leader and HTTP API. Shared state is <strong>one object in any S3 bucket</strong>.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#download">download HOP →</a>
-        <a class="btn btn-ghost" href="https://gui.gethop.org">the GUI</a>
-        <a class="btn btn-ghost" href="#compare">vs K3s &amp; Nomad</a>
+        <a class="btn btn-primary" href="#download">try HOP →</a>
+        <a class="btn btn-ghost" href="https://gui.gethop.org">open the GUI</a>
+        <a class="btn btn-ghost" href="#what">see how it works</a>
       </div>
-      <p class="cross">the hop driver sends jobs to <a class="to-hopos" href="/hopos/">HopOS metal →</a></p>
+      <p class="cross">use the machines you have · <a class="to-hopos" href="/hopos/">add HopOS metal when it helps →</a></p>
     </div>
-    <div class="term term-cli" aria-label="A HOP CLI session">
-      <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp;hop cli · any machine</div>
-      <pre><span class="ps">$</span> run apply --name api --driver hop \
-      --artifact https://builds.internal/api.elf --memory 96M
-<span class="out">api: created</span>
-<span class="ps">$</span> run agents
-<span class="cmt">ID        ENDPOINT                LAST SEEN</span>
-altra-1   http://10.0.0.7:8080    19:41:02
-pi5-a     http://10.0.0.12:8080   19:41:04
-linux-2   http://10.0.0.31:8080   19:41:03
-<span class="ps">$</span> ssh altra-1
-<span class="cmt">ssh: connection refused — there is nothing to ssh into</span></pre>
+
+    <div class="hop-map" role="img" aria-label="One HOP job spec can run as a process, Docker container or HopOS app">
+      <div class="hop-map-label">one job spec</div>
+      <div class="job-spec">
+        <span>api</span>
+        <small>count 3 · memory 96M · restart always</small>
+      </div>
+      <div class="hop-map-line" aria-hidden="true"><i></i><b>HOP</b><i></i></div>
+      <div class="hop-targets">
+        <div><strong>exec</strong><span>process</span><small>Linux · macOS</small></div>
+        <div><strong>Docker</strong><span>container</span><small>Linux · macOS</small></div>
+        <div><strong>hop</strong><span>caged Go app</span><small>HopOS</small></div>
+      </div>
+      <p>same API · same health checks · same job model</p>
     </div>
   </div>
+
 </header>
 
-<section>
-  <div class="wrap">
-    <h2>Every workload. Three drivers, one job spec.</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>exec</h3>
-        <p>Plain processes with isolation and limits, on the <b>Linux and macOS machines you already have</b>. Adopt HOP today without touching your OS choice.</p>
+<main>
+  <section id="what">
+    <div class="wrap intro-grid">
+      <div>
+        <p class="section-kicker">What it is</p>
+        <h2>An orchestrator with almost no control plane.</h2>
       </div>
-      <div class="card">
-        <h3>Docker</h3>
-        <p>Your existing containers, unchanged — <b>same job spec, same API</b>. HOP schedules and supervises; Docker stays the runtime you know.</p>
-      </div>
-      <div class="card">
-        <h3>hop → HopOS</h3>
-        <p>The workload the others can’t: <b>apps without an OS underneath</b>. Whole cores, hardware cages, per-app cpu/mem/temp telemetry with no agents or exporters — see <a href="/hopos/">the HopOS story</a>.</p>
+      <div class="intro-copy">
+        <p>Put the same <code>agent</code> binary on each Linux or macOS machine. The agents elect a leader, accept jobs through one API and keep the requested workloads running.</p>
+        <p>There are no dedicated servers to nurse. If the leader disappears, another agent takes the lock. If a node reboots, it reloads its own committed jobs.</p>
       </div>
     </div>
-    <p style="margin-top: 30px;"><strong>One job spec, every machine in the cluster.</strong> A job can carry <strong>several artifacts</strong>, each with a <code>match</code> on node attributes, and every agent downloads the first one that fits. So one spec sends the arm64 build to a Pi and the riscv64 build to a €15 RISC-V board — no per-node config, no duplicated job. The infrastructure for the metal side is <a href="/hopos/#apps">already published that way</a>: a <a href="https://github.com/xinix00/hoplb">load balancer</a>, <a href="https://github.com/xinix00/hopdns">cluster DNS</a>, a <a href="https://github.com/xinix00/hopprom">Prometheus exporter</a> and Cloudflare’s own tunnel, as signed slot images you point a job at.</p>
-    <p style="margin-top: 30px;"><strong>State lives in any S3 bucket</strong> — one committed object is the whole database, and the leader itself fails over on the same lock (~60 s). The lock is plain S3 conditional writes — <code>If-None-Match: *</code> claims the lease, <code>If-Match: &lt;ETag&gt;</code> renews it; the ETag is the proof no one else wrote in between (<a href="/hop/docs/#architecture">how it works</a>). Reboot a node, it reloads its own jobs: <strong>126/126 back in 17.4 s</strong> after a hard power cut, zero resubmits, measured on real hardware. <strong>count:&nbsp;-1</strong> runs a job on every node in the cluster. And the node itself stays stateless — <strong>state on S3, not on metal</strong>: nothing to back up, nothing to drift.</p>
-  </div>
-</section>
 
-<section id="compare">
-  <div class="wrap">
-    <h2>vs K3s and Nomad — the honest edition</h2>
-    <p class="section-lede">Both are excellent at scale and ecosystem. HOP’s bet is different: <strong>most self-hosted clusters need a fraction of the machinery</strong> — and there’s one workload only HOP can schedule.</p>
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr><th></th><th>K3s</th><th>Nomad</th><th>HOP</th></tr></thead>
-        <tbody>
-          <tr><td>On every node</td><td>Linux + containerd + kubelet</td><td>Linux + nomad + (consul)</td><td class="us">one binary — or just a HopOS stick</td></tr>
-          <tr><td>Control plane</td><td>API server + etcd/sqlite</td><td>3–5 raft servers</td><td class="us">leader, agent &amp; API in the same process</td></tr>
-          <tr><td>Cluster state</td><td>etcd</td><td>raft on servers</td><td class="us">one object in any S3 bucket</td></tr>
-          <tr><td>Processes</td><td>no (containers only)</td><td>yes</td><td class="us">yes — exec driver</td></tr>
-          <tr><td>Containers</td><td>yes</td><td>yes</td><td class="us">yes — Docker driver</td></tr>
-          <tr><td>Apps without an OS</td><td>no</td><td>no</td><td class="us">yes — the hop driver on HopOS metal</td></tr>
-          <tr><td>Reboot with running jobs</td><td>drain, cordon, reschedule</td><td>reschedule via servers</td><td class="us">node reloads its own jobs — 126/126 in 17.4 s</td></tr>
-          <tr><td>Ecosystem</td><td>enormous</td><td>large</td><td class="us">small, and honest about it</td></tr>
-        </tbody>
-      </table>
+    <div class="wrap flow" aria-label="How HOP runs a job">
+      <div><span>01</span><b>Describe</b><p>Name the artifact, resources and restart policy.</p></div>
+      <i aria-hidden="true">→</i>
+      <div><span>02</span><b>Match</b><p>HOP finds nodes with the right architecture and driver.</p></div>
+      <i aria-hidden="true">→</i>
+      <div><span>03</span><b>Run</b><p>The agent starts a process, container or HopOS app.</p></div>
+      <i aria-hidden="true">→</i>
+      <div><span>04</span><b>Reconcile</b><p>Health checks and committed state bring it back.</p></div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section>
-  <div class="wrap">
-    <h2>Small enough to actually read</h2>
-    <p class="section-lede">Lines of code, excluding tests, comments and blanks — counted <strong>the way the compiler sees it</strong>: what the agent binary links from its own module.</p>
-    <div class="ladder" role="img" aria-label="HOP code size per component, in lines">
-      <div class="rung"><span class="lbl"><b>agent &amp; HTTP API</b></span><span class="bar"><i style="width:100%"></i></span><span class="n">~2,800</span></div>
-      <div class="rung"><span class="lbl">runners — exec, Docker, hop</span><span class="bar"><i style="width:79%"></i></span><span class="n">~2,200</span></div>
-      <div class="rung"><span class="lbl">leader &amp; scheduling</span><span class="bar"><i style="width:67%"></i></span><span class="n">~1,875</span></div>
-      <div class="rung"><span class="lbl">shared packages &amp; types</span><span class="bar"><i style="width:23%"></i></span><span class="n">~650</span></div>
+  <section id="workloads" class="workload-section">
+    <div class="wrap">
+      <div class="workload-intro">
+        <div>
+          <p class="section-kicker">What it runs</p>
+          <h2>Three drivers. One job spec.</h2>
+        </div>
+        <p>Start with the runtime you already use. HOP does not make every workload become a container before it can be scheduled.</p>
+      </div>
+      <div class="driver-grid">
+        <article>
+          <span>01 · no image required</span>
+          <h3>exec</h3>
+          <p>Run ordinary binaries with resource limits on the Linux and macOS machines you already own.</p>
+          <small>best for · simple services and existing hosts</small>
+        </article>
+        <article>
+          <span>02 · keep your images</span>
+          <h3>Docker</h3>
+          <p>Run existing containers unchanged on Linux and macOS. Docker stays the runtime; HOP schedules and supervises it.</p>
+          <small>best for · packaged services and non-Go workloads</small>
+        </article>
+        <article class="driver-hopos">
+          <span>03 · remove the host OS</span>
+          <h3>hop → HopOS</h3>
+          <p>Run compiled Go apps on physical cores behind hardware memory fences, with no Linux underneath.</p>
+          <small>best for · edge, appliances and dedicated resources</small>
+          <a href="/hopos/">meet HopOS →</a>
+        </article>
+      </div>
+      <p class="deep-link">One job may contain builds for several architectures; each agent downloads the first artifact that matches its node.</p>
     </div>
-    <p class="ladder-sub">a full cluster in <b>~7,550 lines</b> (the CLI adds ~950) · a kubelet alone is ~700,000</p>
-    <div class="honest">
-      <h3>What HOP is not</h3>
-      <p>Not Kubernetes: no CRDs, no operators, no YAML sprawl — and none of the ecosystem either. Will it have bugs? All software does. The difference is the setup: <b>~7,550 KISS lines that fit in a single AI context window</b> — you can audit the entire orchestrator in one sitting, human or machine. And its <code>go.mod</code> lists <b>three modules, zero third-party</b> — the same foundation HopOS runs on: lean (~5,000 of it linked) and the ~1,000-line S3 lock. No raft library, no etcd, no web framework, no <code>net/http</code>. It has been <b>running our own production workloads for months</b>. We eat here first.</p>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section id="download">
-  <div class="wrap">
-    <h2>Download</h2>
-    <p class="section-lede">Each archive holds two files: <strong><code>agent</code></strong> — the node, which is agent, leader and HTTP API in one process — and <strong><code>run</code></strong>, the CLI you drive it with. Every link points at the <strong>newest release</strong>; GitHub resolves <code>latest</code>, so nothing here goes stale.</p>
-    <div class="tbl-wrap">
-      <table style="min-width: 560px;">
-        <thead><tr><th>Platform</th><th>Archive</th><th>Drivers</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>Linux · amd64</td>
-            <td class="us"><a href="https://github.com/xinix00/hop/releases/latest/download/hop-linux-amd64.tar.gz">hop-linux-amd64.tar.gz</a></td>
-            <td>exec · Docker · hop</td>
-          </tr>
-          <tr>
-            <td>Linux · arm64</td>
-            <td class="us"><a href="https://github.com/xinix00/hop/releases/latest/download/hop-linux-arm64.tar.gz">hop-linux-arm64.tar.gz</a></td>
-            <td>exec · Docker · hop</td>
-          </tr>
-          <tr>
-            <td>macOS · Apple silicon</td>
-            <td class="us"><a href="https://github.com/xinix00/hop/releases/latest/download/hop-darwin-arm64.tar.gz">hop-darwin-arm64.tar.gz</a></td>
-            <td>exec — a laptop in the cluster</td>
-          </tr>
-          <tr>
-            <td>Checksums</td>
-            <td class="us"><a href="https://github.com/xinix00/hop/releases/latest/download/checksums.txt">checksums.txt</a></td>
-            <td><code>shasum -a 256 -c</code></td>
-          </tr>
-        </tbody>
-      </table>
+  <section id="different" class="different-section">
+    <div class="wrap">
+      <p class="section-kicker">What it does differently</p>
+      <h2>Small by removing roles, not features you need every day.</h2>
+      <div class="difference-list">
+        <article>
+          <span class="difference-no">01</span>
+          <div>
+            <h3>Every agent carries the whole control plane.</h3>
+            <p>Leader, scheduler, agent and HTTP API are roles inside the same executable. A small cluster does not need a separate class of control-plane machines.</p>
+          </div>
+          <p class="difference-result">one thing to deploy</p>
+        </article>
+        <article>
+          <span class="difference-no">02</span>
+          <div>
+            <h3>S3 is the shared memory.</h3>
+            <p>One committed object holds cluster state. Conditional writes provide the leader lock. You bring an S3-compatible bucket instead of operating a database or raft quorum.</p>
+          </div>
+          <p class="difference-result">no database servers</p>
+        </article>
+        <article>
+          <span class="difference-no">03</span>
+          <div>
+            <h3>Nodes remember their own work.</h3>
+            <p>After a reboot, an agent reloads its assigned jobs from committed state. Recovery does not wait for someone to recreate the machine by hand.</p>
+          </div>
+          <p class="difference-result">replaceable nodes</p>
+        </article>
+      </div>
+      <p class="deep-link">Want the CAS lock, job lifecycle and API details? <a href="/hop/docs/#architecture">Read the architecture notes →</a></p>
     </div>
-    <p style="margin-top: 22px;">No agent to install on a HopOS machine: there the agent <em>is</em> the boot image — <a href="/hopos/#download">download that instead</a>. The <a href="https://gui.gethop.org">web UI</a> is hosted, so it needs no download either; it talks to whichever cluster you point it at.</p>
-    <p style="margin-top: 26px;"><a class="btn btn-ghost" href="https://github.com/xinix00/hop">the source · HOP on GitHub →</a></p>
-  </div>
-</section>
+  </section>
 
-<section style="border-bottom: 0; padding-bottom: 24px;">
-  <div class="wrap">
-    <div class="together">
-      <p><b>Better together.</b> Start with HOP on the machines you have; add HopOS nodes where isolation and simplicity pay the most — the edge box, the appliance, the machine that must survive a power cut.</p>
-      <a class="btn btn-ghost" href="/hopos/" style="--acc-dim: var(--leaf-dim)">meet HopOS →</a>
+  <section id="compare">
+    <div class="wrap">
+      <p class="section-kicker">Operational surface</p>
+      <h2>The daily tools, with less platform underneath.</h2>
+      <div class="fit-grid">
+        <div class="fit-card fit-yes">
+          <p class="fit-label">The daily tools are here</p>
+          <ul>
+            <li>Processes, Docker and HopOS under one job model</li>
+            <li>Health checks, priorities, restarts and recovery</li>
+            <li><a href="https://github.com/xinix00/hopdns">hopdns</a> discovery and <a href="https://github.com/xinix00/hoplb">hoplb</a> load balancing</li>
+            <li>Prometheus metrics through <a href="https://github.com/xinix00/hopprom">hopprom</a></li>
+          </ul>
+        </div>
+        <div class="fit-card">
+          <p class="fit-label">What actually gets smaller</p>
+          <ul>
+            <li>Leader, scheduler, agent and API become one binary</li>
+            <li>etcd or a Raft quorum becomes one object in S3</li>
+            <li>Workload definitions become a small HOP job spec</li>
+            <li>Processes no longer need a container just to be scheduled</li>
+          </ul>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <section id="proof" class="proof-section">
+    <div class="wrap">
+      <p class="section-kicker">Evidence, not machinery</p>
+      <h2>Small enough to inspect. Used for real work.</h2>
+      <div class="evidence-grid">
+        <article>
+          <strong>~7,550 lines</strong>
+          <h3>for agent, API, leader and all three drivers</h3>
+          <p>The CLI adds ~950 lines. HOP’s <code>go.mod</code> lists three modules and zero third-party modules.</p>
+          <a href="https://github.com/xinix00/hop">read the complete source →</a>
+        </article>
+        <article>
+          <strong>17.4 seconds</strong>
+          <h3>from power cut to 126 restored jobs</h3>
+          <p>Measured with HOP and HopOS on the 128-core Ampere Altra. No jobs were resubmitted.</p>
+          <a href="/hopos/">see the HopOS node →</a>
+        </article>
+        <article>
+          <strong>one object</strong>
+          <h3>is the complete cluster database</h3>
+          <p>Cluster state and leader election use ordinary S3-compatible storage and conditional writes.</p>
+          <a href="/hop/docs/#architecture">read how state works →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="operate">
+    <div class="wrap operate-grid">
+      <div>
+        <p class="section-kicker">Operate it your way</p>
+        <h2>CLI or browser. The same small API.</h2>
+        <p class="section-lede">Use the <code>run</code> CLI in scripts or point the hosted GUI at your cluster. Both talk to HOP’s HMAC-signed HTTP API; the GUI does not add another server to install.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://gui.gethop.org">open gui.gethop.org →</a>
+          <a class="btn btn-ghost" href="/hop/docs/">browse the CLI and API</a>
+        </div>
+      </div>
+      <div class="term term-cli">
+        <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp;run · the HOP CLI</div>
+        <pre><span class="ps">$</span> run apply --name api --driver docker \
+      --artifact registry.local/api:v12
+<span class="out">api: created</span>
+
+<span class="ps">$</span> run agents
+<span class="cmt">ID        DRIVER          LAST SEEN</span>
+altra-1   hop             19:41:02
+pi5-a     hop             19:41:04
+linux-2   exec,docker     19:41:03</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="download" class="download-section">
+    <div class="wrap">
+      <div class="download-head">
+        <div>
+          <p class="section-kicker">Try it</p>
+          <h2>Download one archive.</h2>
+          <p class="section-lede">Each archive contains <code>agent</code>, the node and control plane, plus <code>run</code>, the CLI. The links always resolve to the newest release.</p>
+        </div>
+        <div class="download-actions hop-download-actions">
+          <a class="btn btn-primary" href="https://github.com/xinix00/hop/releases/latest/download/hop-linux-amd64.tar.gz">Linux · amd64</a>
+          <a class="btn btn-ghost" href="https://github.com/xinix00/hop/releases/latest/download/hop-linux-arm64.tar.gz">Linux · arm64</a>
+          <a class="btn btn-ghost" href="https://github.com/xinix00/hop/releases/latest/download/hop-darwin-arm64.tar.gz">macOS · Apple silicon</a>
+        </div>
+      </div>
+
+      <div class="download-contents">
+        <div><span>agent</span><p>agent · leader candidate · scheduler · HTTP API</p></div>
+        <div><span>run</span><p>CLI for jobs, nodes, logs and cluster operations</p></div>
+        <div><span>checksums</span><p><a href="https://github.com/xinix00/hop/releases/latest/download/checksums.txt">verify the downloaded archive →</a></p></div>
+      </div>
+      <div class="final-links">
+        <a href="/hop/docs/">read the setup guide →</a>
+        <a href="https://github.com/xinix00/hop">read the source →</a>
+        <a href="/hopos/#download">download a HopOS node →</a>
+      </div>
+    </div>
+  </section>
+</main>
 
 <footer>
   <div class="wrap foot-grid">

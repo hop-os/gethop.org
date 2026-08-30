@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SURF — windows that live in the cluster. A HopOS tech demo.</title>
-<meta name="description" content="SURF: network-transparent windows for HopOS. An app draws anywhere in the cluster, a display node composites it, and a window survives its app moving to another machine. A tech demo, not a product.">
-<meta property="og:title" content="SURF — a HopOS tech demo">
-<meta property="og:description" content="Network-transparent windows for HopOS: draw anywhere in the cluster, composite on one screen. A demo, not a product.">
+<title>SURF — one desktop, windows from many HopOS machines</title>
+<meta name="description" content="SURF is a HopOS tech demo: apps draw anywhere in a HOP cluster, one display node composites their windows, and a window can return after its machine disappears.">
+<meta property="og:title" content="SURF — a distributed desktop on HopOS">
+<meta property="og:description" content="One screen, windows from different machines. A HopOS tech demo.">
 <meta property="og:url" content="https://gethop.org/surf/">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=7">
+<link rel="stylesheet" href="/style.css?v=10">
 </head>
-<body class="pg-surf">
+<body class="pg-surf surf-overview">
 
 <nav class="topbar">
   <div class="wrap topbar-in">
@@ -20,93 +20,204 @@
     <input type="checkbox" id="menu" class="menu-box">
     <label for="menu" class="menu-btn" aria-label="menu">≡</label>
     <div class="topnav">
-      <a class="other-hopos" href="/hopos/">HopOS · the Go-only OS →</a>
-      <a class="other-hop" href="/hop/">HOP · the orchestrator →</a>
+      <a href="#what">how it works</a>
+      <a href="#demos">demos</a>
+      <a href="#limits">limits</a>
+      <a class="other-hopos" href="/hopos/">HopOS →</a>
       <a class="gh" href="https://github.com/xinix00/hop-os-surf">GitHub</a>
     </div>
   </div>
 </nav>
 
-<header class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <p class="pg-mark">SURF · a tech demo</p>
-      <h1>Windows that live in the cluster.</h1>
-      <p class="lede">An app draws into an <code>image.RGBA</code> on <strong>whichever machine it happens to run on</strong>; a display node composites it as a window on one screen. Kill the machine behind a window, let <a href="/hop/">HOP</a> restart that app somewhere else, and <strong>the window comes back by itself</strong>. All of it is ordinary <a href="/hopos/">HopOS</a> apps.</p>
+<header class="hero surf-hero">
+  <div class="wrap surf-hero-grid">
+    <div class="surf-hero-copy">
+      <p class="pg-mark">SURF · a HopOS tech demo</p>
+      <h1>One desktop. Windows from many machines.</h1>
+      <p class="lede">A SURF app can run anywhere in a HOP cluster while its window appears on one display. If that machine disappears, <strong>HOP restarts the app elsewhere and the window returns.</strong></p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="https://github.com/xinix00/hop-os-surf">hop-os-surf on GitHub →</a>
-        <a class="btn btn-ghost" href="#parts">what’s in it</a>
+        <a class="btn btn-primary" href="https://github.com/xinix00/hop-os-surf">explore the source →</a>
+        <a class="btn btn-ghost" href="#what">see how it works</a>
       </div>
-      <p class="cross">this is a demo of <a class="to-hopos" href="/hopos/">what a HopOS app can be →</a></p>
+      <p class="cross">built as ordinary <a class="to-hopos" href="/hopos/">HopOS apps</a> · moved by <a class="to-hop" href="/hop/">HOP</a></p>
     </div>
-    <figure class="shot" style="margin: 0;">
-      <a href="/surf/img/desktop.png"><img src="/surf/img/desktop.png" alt="A desktop with a clock window from node-a, a task manager from node-b and a calculator from node-c, plus a taskbar" width="1280" height="720"></a>
-      <figcaption><b>clock @ node-a · taskman @ node-b · calc @ node-c.</b> Read the title bars: three windows, three different machines, one display.</figcaption>
+    <figure class="shot surf-main-shot">
+      <a href="/surf/img/desktop.png"><img src="/surf/img/desktop.png" alt="A SURF desktop with a clock window from node-a, a task manager from node-b and a calculator from node-c" width="1280" height="720"></a>
+      <figcaption><b>clock @ node-a · taskman @ node-b · calc @ node-c.</b> Three machines, one screen.</figcaption>
     </figure>
   </div>
+
 </header>
 
-<section>
-  <div class="wrap">
-    <h2>The window is not on the machine</h2>
-    <p class="section-lede">On a normal desktop a window belongs to a process on that same box. Here it belongs to <strong>a job in a cluster</strong>. The app opens a window, draws, calls <code>Present()</code> — and if the connection breaks it reconnects and resends a full frame on its own. Nothing in the app knows or cares which machine the pixels end up on.</p>
-    <p>Two kinds of app. A <strong>pixel app</strong> ships frames: simple, and how the clock and the browser work. A <strong>scene app</strong> ships one binary widget tree once and then byte-sized patches — the display does layout, re-flow and hit-testing, and hands back semantic events. That is why a calculator keypress is a handful of bytes on the wire, and why the whole thing stays usable over a network instead of a video cable.</p>
-    <p>The compositor is <strong>software all the way down</strong> — no GPU driver exists anywhere in this stack. There is also a <strong>web-KVM</strong>: the display serves <code>/kvm</code>, so you watch that screen and drive mouse and keyboard from any browser, and <code>/screen.png</code> for a machine with no monitor at all.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <h2>A browser, written from scratch</h2>
-    <p class="section-lede">Not a wrapper around someone else’s engine — there is none to wrap. Its own fetching, its own DOM, its own CSS cascade, its own layout and its own rendering, in a caged app with <strong>no operating system underneath it</strong>.</p>
-    <figure class="shot">
-      <a href="/surf/img/browser.png"><img src="/surf/img/browser.png" alt="The SURF browser rendering the gethop.org HOP page" loading="lazy" width="1280" height="700"></a>
-      <figcaption><b>This website, rendered on bare metal by an app in a cage.</b> The page you are reading, fetched and laid out by the browser in the screenshot.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<section id="goboy">
-  <div class="wrap">
-    <h2>And somebody else’s emulator</h2>
-    <p class="section-lede"><a href="https://github.com/Humpheh/goboy">goboy</a>, a Game Boy emulator in pure Go, as a slot app with its screen in a SURF window — <strong>on the display node’s own monitor</strong>, with the node’s own USB keyboard and mouse, or in a browser through the web-KVM. Upstream is <strong>neither forked nor pinned</strong>: a prepare script pulls the latest branch head and drops two additions beside it. <strong>Zero lines of upstream code changed</strong> — a constructor that takes the ROM as bytes, and an empty stand-in for the cgo audio package.</p>
-    <figure class="shot" style="max-width: 500px;">
-      <a href="/surf/img/goboy.png"><img src="/surf/img/goboy.png" alt="A SURF window running Libbet and the Magic Floor: a tiled puzzle floor with the player sprite mid-jump, a 5 combo, 25 per cent and 5 of 20 cells cleared" loading="lazy" width="492" height="464"></a>
-      <figcaption><b><a href="https://github.com/pinobatch/libbet">Libbet and the Magic Floor</a></b> — zlib-licensed homebrew, so it can be shown here. It also passes blargg’s <code>cpu_instrs</code>, eleven of eleven.</figcaption>
-    </figure>
-    <p style="margin-top: 30px;">No sound — SURF has no audio channel, so the APU runs with its output disabled. And the window belongs to the cluster, not the machine: kill the node, let HOP restart the job elsewhere, and the window returns — at the title screen, since nothing hands over the save state.</p>
-  </div>
-</section>
-
-<section id="parts">
-  <div class="wrap">
-    <h2>What’s in the demo</h2>
-    <p class="section-lede">Every one of these is a separate HopOS job you can start, kill and move independently — including the desktop chrome itself.</p>
-    <dl class="apps">
-      <div><dt>display</dt><dd>The surface: SURF sessions, the software compositor, the taskbar and start menu, and the web-KVM. <b>The only app that touches the framebuffer.</b></dd></div>
-      <div><dt>launcher</dt><dd>The desktop starting itself: buttons come from the node’s boot-config app catalog, and a click submits that job to HOP.</dd></div>
-      <div><dt>taskman</dt><dd>The cluster watching itself — agents → jobs → tasks → live logs over SSE, each log line one patch on the wire.</dd></div>
-      <div><dt>browser</dt><dd>Own DOM, cascade, layout and rendering. Slow, incomplete, and it renders real pages.</dd></div>
-      <div><dt>clock · calc</dt><dd>The two smallest examples, one of each kind: a pixel app that draws an analog face, a scene app whose keypad lives display-side.</dd></div>
-      <div><dt>dash</dt><dd>The honest one: a dashboard that measures and shows <b>its own wire traffic</b>, so the protocol claims are checkable.</dd></div>
-      <div><dt>goboy</dt><dd>A ported Game Boy emulator — <a href="#goboy">above</a>. The first port of third-party GUI software, and the pattern for the next one.</dd></div>
-    </dl>
-    <div class="honest">
-      <h3>Limits</h3>
-      <p>A <b>tech demo</b>: not supported, not versioned for you, not run in production. The published images are <b>arm64 only</b> and need HopOS v1.5.1 or newer, parts of the on-screen text are still Dutch, and the browser fails on plenty of the web.</p>
+<main>
+  <section id="what">
+    <div class="wrap intro-grid">
+      <div>
+        <p class="section-kicker">What it is</p>
+        <h2>A distributed desktop built from ordinary jobs.</h2>
+      </div>
+      <div class="intro-copy">
+        <p>The app owns its window; it does not need to own the screen. It draws on whichever node HOP chose, then sends frames or small scene updates to the display job.</p>
+        <p>The display composites those windows, routes input back to the right app and can expose the whole screen through a browser.</p>
+      </div>
     </div>
-    <p style="margin-top: 30px;">What it is <em>not</em> is a change to HopOS. Graphics in the OS is <strong>one grant</strong> — it hands one app the framebuffer — and it lives in the GUI flavour: <strong>a headless image links none of it</strong>. Windowing, compositing, the browser and every app above live in <a href="https://github.com/xinix00/hop-os-surf">their own repo</a> and are cageable, killable and replaceable like any other job. A desktop cost the operating system nothing.</p>
-  </div>
-</section>
 
-<section style="border-bottom: 0; padding-bottom: 24px;">
-  <div class="wrap">
-    <div class="together">
-      <p><b>The two things this is built on.</b> <a href="/hopos/">HopOS</a> gives every app whole cores behind a hardware cage; <a href="/hop/">HOP</a> decides which machine each app runs on — and moves it when a machine dies, which is why a window can outlive its node.</p>
-      <a class="btn btn-ghost" href="/hopos/" style="--acc-dim: var(--leaf-dim)">meet HopOS →</a>
+    <div class="wrap surf-flow" aria-label="How a SURF window reaches the screen">
+      <div class="surf-flow-app">
+        <span>node-a</span>
+        <b>Go app</b>
+        <small>draws a frame or scene</small>
+      </div>
+      <div class="surf-wire">
+        <i aria-hidden="true">→</i>
+        <span>pixels or patches</span>
+        <i aria-hidden="true">→</i>
+      </div>
+      <div class="surf-flow-display">
+        <span>display node</span>
+        <b>SURF compositor</b>
+        <small>layout · input · taskbar</small>
+      </div>
+      <div class="surf-wire">
+        <i aria-hidden="true">→</i>
+        <span>framebuffer or web KVM</span>
+        <i aria-hidden="true">→</i>
+      </div>
+      <div class="surf-flow-screen">
+        <span>one screen</span>
+        <b>▣ ▢ ▣</b>
+        <small>local monitor or browser</small>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <section id="different" class="different-section">
+    <div class="wrap">
+      <p class="section-kicker">What it demonstrates</p>
+      <h2>The desktop is distributed. The OS stays small.</h2>
+      <div class="difference-list">
+        <article>
+          <span class="difference-no">01</span>
+          <div>
+            <h3>A window belongs to a cluster job.</h3>
+            <p>It reconnects to the display after its process is restarted on another node. The window returns because its identity lives above one particular machine.</p>
+          </div>
+          <p class="difference-result">windows can move</p>
+        </article>
+        <article>
+          <span class="difference-no">02</span>
+          <div>
+            <h3>The GUI is not part of HopOS.</h3>
+            <p>HopOS grants one ordinary app access to the framebuffer. Windowing, compositing, the taskbar, browser and web KVM all remain replaceable apps outside the OS.</p>
+          </div>
+          <p class="difference-result">zero desktop in the kernel</p>
+        </article>
+        <article>
+          <span class="difference-no">03</span>
+          <div>
+            <h3>Apps send the representation that fits.</h3>
+            <p>A pixel app sends frames. A scene app sends a widget tree once, then tiny patches while the display handles layout, hit-testing and semantic input.</p>
+          </div>
+          <p class="difference-result">not remote video</p>
+        </article>
+      </div>
+      <p class="deep-link">The whole compositor is software: there is no GPU driver anywhere in this stack.</p>
+    </div>
+  </section>
+
+  <section id="demos" class="demo-section">
+    <div class="wrap">
+      <p class="section-kicker">Inside the demo</p>
+      <h2>Two deliberately unreasonable apps.</h2>
+      <p class="section-lede">A browser proves the stack can build something complex from scratch. A third-party Game Boy emulator proves existing pure-Go GUI code can be brought along.</p>
+
+      <div class="demo-grid">
+        <article class="demo-card">
+          <figure class="shot">
+            <a href="/surf/img/browser.png"><img src="/surf/img/browser.png" alt="The SURF browser rendering the gethop.org HOP page" loading="lazy" width="1280" height="700"></a>
+          </figure>
+          <div class="demo-copy">
+            <p class="project-type">browser · from scratch</p>
+            <h3>Its own DOM, CSS and layout.</h3>
+            <p>Not a wrapper around an existing engine. Fetching, cascade, layout and rendering all run inside a caged Go app with no Linux underneath.</p>
+            <small>Incomplete and slow — but it renders real pages, including this site.</small>
+          </div>
+        </article>
+
+        <article id="goboy" class="demo-card demo-card-goboy">
+          <figure class="shot">
+            <a href="/surf/img/goboy.png"><img src="/surf/img/goboy.png" alt="A SURF window running Libbet and the Magic Floor in the goboy emulator" loading="lazy" width="492" height="464"></a>
+          </figure>
+          <div class="demo-copy">
+            <p class="project-type">Game Boy · third-party Go</p>
+            <h3>Zero upstream lines changed.</h3>
+            <p><a href="https://github.com/Humpheh/goboy">goboy</a> runs as a HopOS slot app and presents its screen in a SURF window. A prepare step adds two small adapters beside upstream.</p>
+            <small>No audio yet. The emulator passes blargg’s CPU instruction tests, eleven of eleven.</small>
+          </div>
+        </article>
+      </div>
+
+      <div class="app-shelf surf-app-shelf" aria-label="More parts of the SURF demo">
+        <div><b>taskman</b><span>jobs, tasks and live logs from the cluster</span></div>
+        <div><b>launcher</b><span>submits a selected app to HOP</span></div>
+        <div><b>dash</b><span>shows its own protocol traffic</span></div>
+        <div><b>clock + calc</b><span>small pixel and scene examples</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="parts">
+    <div class="wrap architecture-grid">
+      <div>
+        <p class="section-kicker">What lives where</p>
+        <h2>One hardware grant. Everything else is replaceable.</h2>
+        <p class="section-lede">The GUI flavour of HopOS can grant the framebuffer to one app: <code>display</code>. That is the entire OS-level graphics contract. A headless HopOS image links none of it.</p>
+      </div>
+      <div class="architecture-stack" role="img" aria-label="SURF lives above a single framebuffer grant in HopOS">
+        <div class="architecture-apps"><span>browser</span><span>clock</span><span>goboy</span><span>taskman</span></div>
+        <div class="architecture-wire">SURF protocol · network</div>
+        <div class="architecture-display"><b>display</b><span>compositor · taskbar · web KVM</span></div>
+        <div class="architecture-grant">one framebuffer grant</div>
+        <div class="architecture-os"><b>HopOS</b><span>all other apps stay caged</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="limits" class="limits-section">
+    <div class="wrap">
+      <p class="section-kicker">The honest status</p>
+      <h2>A tech demo, not a desktop product.</h2>
+      <div class="fit-grid">
+        <div class="fit-card fit-yes">
+          <p class="fit-label">What it proves</p>
+          <ul>
+            <li>HopOS apps can build a complete GUI above the OS</li>
+            <li>Windows can reconnect after jobs move between nodes</li>
+            <li>Pure-Go GUI software has a practical porting path</li>
+            <li>A local monitor and browser KVM can share one display</li>
+          </ul>
+        </div>
+        <div class="fit-card">
+          <p class="fit-label">What it does not promise</p>
+          <ul>
+            <li>No production support or stable version contract</li>
+            <li>Published app images are arm64 only</li>
+            <li>The browser fails on plenty of the web</li>
+            <li>No audio or live application-state handoff yet</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="surf-source">
+        <div>
+          <b>Curious is the right audience.</b>
+          <p>Build it, break it and read it. Every desktop component lives in the open, separate from HopOS itself.</p>
+        </div>
+        <a class="btn btn-primary" href="https://github.com/xinix00/hop-os-surf">hop-os-surf on GitHub →</a>
+      </div>
+    </div>
+  </section>
+</main>
 
 <footer>
   <div class="wrap foot-grid">

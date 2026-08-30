@@ -21,6 +21,7 @@
     <label for="menu" class="menu-btn" aria-label="menu">≡</label>
     <div class="topnav">
       <a href="#different">why HOP</a>
+      <a href="#recovery">recovery</a>
       <a href="#workloads">workloads</a>
       <a href="#download">download</a>
       <a href="/hop/docs/">docs</a>
@@ -149,7 +150,46 @@
           <p class="difference-result">one inspectable program</p>
         </article>
       </div>
-      <p class="deep-link">The CAS lock, job lifecycle and recovery model are in the <a href="/hop/docs/#architecture">architecture notes →</a></p>
+
+      <details id="recovery" class="architecture-details recovery-details">
+        <summary>How does HOP elect and recover? <span>open the election + restart path</span></summary>
+        <div class="architecture-body">
+          <p class="architecture-lede">Every agent is already a leader candidate. Election is one small lease; recovery is reading the desired state and starting only what is missing.</p>
+
+          <div class="recovery-flow" aria-label="A free or expired lease gets one conditional-write winner, which becomes leader and restores the desired state">
+            <span>free / expired lease</span><i>→</i><span>conditional write</span><i>→</i><b>one winner</b><i>→</i><span>restore desired state</span>
+          </div>
+
+          <div class="architecture-copy recovery-copy">
+            <article>
+              <h3>One renewable lease</h3>
+              <p>The leader renews a small blob in an S3-compatible store or hoplockserver. The store is the referee; HOP does not run a separate election quorum.</p>
+            </article>
+            <article>
+              <h3>One conditional winner</h3>
+              <p>At boot an agent tries immediately. After a live leader disappears, agents wait for lease expiry and then race the same conditional write. Exactly one succeeds.</p>
+            </article>
+            <article>
+              <h3>No new control plane to boot</h3>
+              <p>The winning agent enables the leader role inside its existing process, loads the committed snapshot and opens the leader API.</p>
+            </article>
+            <article>
+              <h3>Reconcile, do not replay</h3>
+              <p>A new leader first lets agents register what they still run. HOP compares that with desired state and dispatches only missing instances, so a takeover does not duplicate healthy jobs.</p>
+            </article>
+          </div>
+
+          <div class="recovery-measure">
+            <strong>17.3 s</strong>
+            <div>
+              <h3>power back → 126 jobs running again</h3>
+              <p>Measured on the 128-core Ampere Altra. This is the complete cold path — firmware, HopOS, HOP recovery and app start — not the lease timeout of a live leader failover.</p>
+            </div>
+          </div>
+
+          <p class="architecture-doc-link"><a href="/hop/docs/#architecture">Read the full election and state design →</a></p>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -250,6 +290,23 @@ linux-2   exec,docker     19:41:03</pre>
   </div>
   <div class="wrap"><p class="foot-copy">© 2026 gethop.org</p></div>
 </footer>
+
+<script>
+(() => {
+  const recovery = document.getElementById('recovery');
+  if (!recovery) return;
+
+  const revealRecovery = () => {
+    if (location.hash === '#recovery') recovery.open = true;
+  };
+
+  document.querySelectorAll('a[href="#recovery"]').forEach(link => {
+    link.addEventListener('click', () => { recovery.open = true; });
+  });
+  window.addEventListener('hashchange', revealRecovery);
+  revealRecovery();
+})();
+</script>
 
 </body>
 </html>

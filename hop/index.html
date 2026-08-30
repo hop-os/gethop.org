@@ -121,35 +121,35 @@
 
   <section id="different" class="different-section">
     <div class="wrap">
-      <p class="section-kicker">What it does differently</p>
-      <h2>Small by removing roles, not features you need every day.</h2>
+      <p class="section-kicker">Why it exists</p>
+      <h2>A small cluster should not inherit a networking industry.</h2>
       <div class="difference-list">
         <article>
           <span class="difference-no">01</span>
           <div>
-            <h3>Every agent carries the whole control plane.</h3>
-            <p>Leader, scheduler, agent and HTTP API are roles inside the same executable. A small cluster does not need a separate class of control-plane machines.</p>
+            <h3>Remove the layers that cause the incident.</h3>
+            <p>Kubernetes and K3s bring a large control plane plus network plugins, overlays and policy layers. HOP schedules onto the network you already operate; it adds no cluster overlay or CNI layer of its own.</p>
           </div>
-          <p class="difference-result">one thing to deploy</p>
+          <p class="difference-result">less that can break</p>
         </article>
         <article>
           <span class="difference-no">02</span>
           <div>
-            <h3>S3 is the shared memory.</h3>
-            <p>One committed object holds cluster state. Conditional writes provide the leader lock. You bring an S3-compatible bucket instead of operating a database or raft quorum.</p>
+            <h3>Make the network boundary honest.</h3>
+            <p>The VLAN is the boundary. A workload on that VLAN — or someone who controls a host — can already reach the services there. HOP does not hide that fact behind another software network.</p>
           </div>
-          <p class="difference-result">no database servers</p>
+          <p class="difference-result">the VLAN is the boundary</p>
         </article>
         <article>
           <span class="difference-no">03</span>
           <div>
-            <h3>Nodes remember their own work.</h3>
-            <p>After a reboot, an agent reloads its assigned jobs from committed state. Recovery does not wait for someone to recreate the machine by hand.</p>
+            <h3>Keep the orchestrator small enough to know.</h3>
+            <p>Leader, scheduler, agent, API and three workload drivers live in one ~7,550-line Go program. Cluster state is one object in S3, not another database cluster.</p>
           </div>
-          <p class="difference-result">replaceable nodes</p>
+          <p class="difference-result">one inspectable program</p>
         </article>
       </div>
-      <p class="deep-link">Want the CAS lock, job lifecycle and API details? <a href="/hop/docs/#architecture">Read the architecture notes →</a></p>
+      <p class="deep-link">The CAS lock, job lifecycle and recovery model are in the <a href="/hop/docs/#architecture">architecture notes →</a></p>
     </div>
   </section>
 
@@ -176,33 +176,6 @@
             <li>Processes no longer need a container just to be scheduled</li>
           </ul>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="proof" class="proof-section">
-    <div class="wrap">
-      <p class="section-kicker">Evidence, not machinery</p>
-      <h2>Small enough to inspect. Used for real work.</h2>
-      <div class="evidence-grid">
-        <article>
-          <strong>~7,550 lines</strong>
-          <h3>for agent, API, leader and all three drivers</h3>
-          <p>The CLI adds ~950 lines. HOP’s <code>go.mod</code> lists three modules and zero third-party modules.</p>
-          <a href="https://github.com/xinix00/hop">read the complete source →</a>
-        </article>
-        <article>
-          <strong>17.4 seconds</strong>
-          <h3>from power cut to 126 restored jobs</h3>
-          <p>Measured with HOP and HopOS on the 128-core Ampere Altra. No jobs were resubmitted.</p>
-          <a href="/hopos/">see the HopOS node →</a>
-        </article>
-        <article>
-          <strong>one object</strong>
-          <h3>is the complete cluster database</h3>
-          <p>Cluster state and leader election use ordinary S3-compatible storage and conditional writes.</p>
-          <a href="/hop/docs/#architecture">read how state works →</a>
-        </article>
       </div>
     </div>
   </section>

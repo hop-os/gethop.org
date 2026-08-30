@@ -21,6 +21,7 @@
     <label for="menu" class="menu-btn" aria-label="menu">≡</label>
     <div class="topnav">
       <a href="#different">why HopOS</a>
+      <a href="#architecture">how it works</a>
       <a href="#apps">apps</a>
       <a href="#download">download</a>
       <a href="/hopos/docs/">docs</a>
@@ -84,35 +85,78 @@
 
   <section id="different" class="different-section">
     <div class="wrap">
-      <p class="section-kicker">What it does differently</p>
-      <h2>Three design choices change the whole machine.</h2>
+      <p class="section-kicker">Why it exists</p>
+      <h2>Less code means fewer places for bugs to wait.</h2>
       <div class="difference-list">
         <article>
           <span class="difference-no">01</span>
           <div>
-            <h3>Remove the shared kernel.</h3>
-            <p>A normal server puts every workload on one large kernel. HopOS keeps the OS outside an app’s address space and exposes an ABI of ten operations instead. There is simply much less shared machinery to attack, patch or configure.</p>
+            <h3>Start before Linux.</h3>
+            <p>A conventional node already trusts a complex bootloader before it starts a ~30-million-line Linux kernel — then adds systemd, libc and a container runtime. AI makes large patch rounds easier to produce; it does not make that surface smaller. HopOS includes its own boot path; a complete node is about 11,300 lines.</p>
           </div>
-          <p class="difference-result">smaller trusted surface</p>
+          <p class="difference-result">a smaller bug surface</p>
         </article>
         <article>
           <span class="difference-no">02</span>
           <div>
-            <h3>Give resources away whole.</h3>
-            <p>By default, an app owns physical cores and a memory partition. ARM stage-2 translation or a RISC-V PMP whitelist forms the boundary in silicon. Trusted apps can opt into sharing; strangers never do by accident.</p>
+            <h3>Keep dependencies visible.</h3>
+            <p>Lean contains the network stack, TLS, HTTP, S3 and ELF support in one readable Go module. It can be the only library dependency of a HopOS app; it does not have to be — ordinary Go packages remain your choice.</p>
           </div>
-          <p class="difference-result">predictable isolation</p>
+          <p class="difference-result">no dependency pile</p>
         </article>
         <article>
           <span class="difference-no">03</span>
           <div>
-            <h3>Rebuild nodes instead of repairing them.</h3>
-            <p>The boot medium carries HopOS and a few lines of config. Apps and cluster state live in object storage. After a power cut, the node reconstructs itself from committed state instead of trusting whatever happened to remain on disk.</p>
+            <h3>Change the boundary, not just the line count.</h3>
+            <p>Apps do not share a kernel or an address space. HopOS gives each app cores and memory, then uses the processor’s own translation and protection hardware to make everything outside that partition unreachable.</p>
           </div>
-          <p class="difference-result">no machine drift</p>
+          <p class="difference-result">hardware, not policy</p>
         </article>
       </div>
-      <p class="deep-link">Want the mechanisms, fault traces and threat model? <a href="/hopos/docs/#technical/isolation">Read the isolation notes →</a></p>
+
+      <details id="architecture" class="architecture-details">
+        <summary>How does that work? <span>open the technical version</span></summary>
+        <div class="architecture-body">
+          <p class="architecture-lede">HopOS owns the privilege level above the apps: EL2 on ARM and machine mode on RISC-V. It loads an app into a memory partition, asks the processor to enforce that partition, and only then starts the app at the lower privilege level.</p>
+
+          <div class="architecture-copy">
+            <article>
+              <h3>Load one relocatable slot</h3>
+              <p>The node streams the signed app image into its assigned partition. Address translation lets every slot use the same link address, so one artifact per architecture can run in any slot.</p>
+            </article>
+            <article>
+              <h3>Fence it before entry</h3>
+              <p>ARM uses a stage-2 page table with its own VMID. RISC-V uses a PMP whitelist for the boundary and an Sv39 page table for relocation. If HopOS cannot establish the cage, it does not start the app.</p>
+            </article>
+            <article>
+              <h3>Keep devices on the other side</h3>
+              <p>The app talks to HopOS through a control page and two rings. The node programs network and storage devices; an app cannot invent a syscall or point DMA outside its cage.</p>
+            </article>
+            <article>
+              <h3>Give the resource back cleanly</h3>
+              <p>On ARM, HopOS revokes the stage-2 mapping and parks the core. On RISC-V, it resets the hart. The boundary belongs to the hardware, so stopping one slot does not require cooperation from its app.</p>
+            </article>
+          </div>
+
+          <div class="architecture-table-wrap">
+            <table>
+              <thead>
+                <tr><th></th><th>ARM</th><th>RISC-V</th></tr>
+              </thead>
+              <tbody>
+                <tr><th>HopOS owns</th><td>EL2</td><td>machine mode</td></tr>
+                <tr><th>app runs in</th><td>EL1</td><td>supervisor mode</td></tr>
+                <tr><th>memory boundary</th><td>stage-2 table + VMID</td><td>PMP whitelist</td></tr>
+                <tr><th>relocation</th><td>the same stage-2 table</td><td>Sv39 page table</td></tr>
+                <tr><th>stop</th><td>revoke mapping + park core</td><td>reset hart</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="architecture-note">By default an app also gets whole physical cores, with no time-sharing between strangers. Trusted apps may explicitly opt into a sharegroup; the memory cage stays in place.</p>
+          <p class="architecture-doc-link"><a href="/hopos/docs/#technical/isolation">Read the full isolation design →</a></p>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -143,33 +187,6 @@
       <div class="together fit-together">
         <p><b>Need both?</b> A HOP cluster can mix HopOS nodes with Linux machines. Run caged Go apps on HopOS and keep Docker or non-Go workloads on Linux, behind the same job API.</p>
         <a class="btn btn-ghost" href="/hop/" style="--acc-dim: var(--copper-dim)">meet HOP →</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="proof" class="proof-section">
-    <div class="wrap">
-      <p class="section-kicker">Evidence, not adjectives</p>
-      <h2>Small enough to inspect. Real enough to run.</h2>
-      <div class="evidence-grid">
-        <article>
-          <strong>~11,300</strong>
-          <h3>lines of HopOS on the reference node</h3>
-          <p>Bootloader, isolation, network and drivers included, plus ~10,700 lines of deliberately small dependencies. The count follows the exact image import graph.</p>
-          <a href="https://github.com/xinix00/HopOS/blob/main/tools/loc.go">see how it is counted →</a>
-        </article>
-        <article>
-          <strong>17.4 seconds</strong>
-          <h3>from power cut to 126 restored jobs</h3>
-          <p>Measured on the 128-core Ampere Altra reference machine. The node reloads its committed state instead of recovering a mutable installation.</p>
-          <a href="/hopos/docs/">read the operating model →</a>
-        </article>
-        <article>
-          <strong>€15 → 128 cores</strong>
-          <h3>the same contract at both ends</h3>
-          <p>A LicheeRV Nano and an Ampere Altra use the same app ABI and job model. Only the hardware mechanism underneath the cage changes.</p>
-          <a href="/hopos/docs/#boot">read the board notes →</a>
-        </article>
       </div>
     </div>
   </section>
@@ -218,15 +235,15 @@
       <div>
         <p class="section-kicker">Where it runs</p>
         <h2>From a tiny board to a many-core server.</h2>
-        <p class="section-lede">Apps are built once per architecture, not once per board. HopOS supplies the board-specific boot and drivers underneath.</p>
+        <p class="section-lede">Apps are built once per architecture, not once per board. HopOS supplies the board-specific boot and drivers underneath. On UEFI machines and the Mac mini M4, its own bootloader takes over from the platform firmware — no GRUB in between.</p>
       </div>
       <div class="machine-list">
-        <span><b>Ampere Altra</b><small>128-core reference</small></span>
+        <span><b>Ampere Altra</b><small>128-core reference · UEFI</small></span>
         <span><b>Raspberry Pi 4 + 5</b><small>arm64</small></span>
         <span><b>Radxa Zero 3E</b><small>arm64 + GUI</small></span>
         <span><b>LicheeRV Nano</b><small>riscv64 · ~€15</small></span>
-        <span><b>Mac mini M4</b><small>Apple silicon</small></span>
-        <span><b>QEMU + UEFI arm64</b><small>development + CI</small></span>
+        <span><b>Mac mini M4</b><small>iBoot → HopOS bootloader</small></span>
+        <span><b>UEFI arm64</b><small>firmware → HopOS bootloader · hardware + QEMU</small></span>
       </div>
     </div>
   </section>

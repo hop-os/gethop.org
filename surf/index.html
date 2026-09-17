@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SURF — one desktop, windows from many HopOS machines</title>
-<meta name="description" content="SURF is a HopOS tech demo: apps draw anywhere in a HOP cluster, one display node composites their windows, and a window can return after its machine disappears.">
+<meta name="description" content="SURF brings windows from multiple HopOS machines to one screen: pixel and scene apps, a software compositor, browser access and cluster tools.">
 <meta property="og:title" content="SURF — a distributed desktop on HopOS">
-<meta property="og:description" content="One screen, windows from different machines. A HopOS tech demo.">
+<meta property="og:description" content="One screen, windows from different machines. A distributed desktop built from ordinary HopOS apps.">
 <meta property="og:url" content="https://gethop.org/surf/">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=10">
+<link rel="stylesheet" href="/style.css?v=12">
 </head>
 <body class="pg-surf surf-overview">
 
@@ -29,10 +29,12 @@
   </div>
 </nav>
 
+<div class="family-nav"><div class="wrap"><a href="/hopos/"><b>HopOS</b><span>Run the machine</span></a><a href="/hop/"><b>HOP</b><span>Run the jobs</span></a><a href="/surf/" aria-current="page"><b>SURF</b><span>Bring them to the screen</span></a></div></div>
+
 <header class="hero surf-hero">
   <div class="wrap surf-hero-grid">
     <div class="surf-hero-copy">
-      <p class="pg-mark">SURF · a HopOS tech demo</p>
+      <p class="pg-mark">SURF · the distributed desktop</p>
       <h1>One desktop. Windows from many machines.</h1>
       <p class="lede">A SURF app can run anywhere in a HOP cluster while its window appears on one display. If that machine disappears, <strong>HOP restarts the app elsewhere and the window returns.</strong></p>
       <div class="cta-row">
@@ -118,7 +120,7 @@
             <h3>Apps send the representation that fits.</h3>
             <p>A pixel app sends frames. A scene app sends a widget tree once, then tiny patches while the display handles layout, hit-testing and semantic input.</p>
           </div>
-          <p class="difference-result">not remote video</p>
+          <p class="difference-result">pixels or scene updates</p>
         </article>
       </div>
       <p class="deep-link">The whole compositor is software: there is no GPU driver anywhere in this stack.</p>
@@ -128,8 +130,8 @@
   <section id="demos" class="demo-section">
     <div class="wrap">
       <p class="section-kicker">Inside the demo</p>
-      <h2>Two deliberately unreasonable apps.</h2>
-      <p class="section-lede">A browser proves the stack can build something complex from scratch. A third-party Game Boy emulator proves existing pure-Go GUI code can be brought along.</p>
+      <h2>A browser, an emulator, and the tools around them.</h2>
+      <p class="section-lede">The browser brings fetching, CSS and layout into a Go app. The Game Boy port brings an existing Go emulator to a SURF window. The launcher and task manager connect the desktop to the cluster.</p>
 
       <div class="demo-grid">
         <article class="demo-card">
@@ -138,9 +140,9 @@
           </figure>
           <div class="demo-copy">
             <p class="project-type">browser · from scratch</p>
-            <h3>Its own DOM, CSS and layout.</h3>
-            <p>Not a wrapper around an existing engine. Fetching, cascade, layout and rendering all run inside a caged Go app with no Linux underneath.</p>
-            <small>Incomplete and slow — but it renders real pages, including this site.</small>
+            <h3>HTML, CSS and software rendering.</h3>
+            <p>The browser uses Go HTML parsing and selector libraries, with its own fetching, CSS, layout and rendering code. It runs inside an app’s memory partition.</p>
+            <small>Renders real pages, including this site. Web compatibility and performance are still limited.</small>
           </div>
         </article>
 
@@ -185,11 +187,11 @@
 
   <section id="limits" class="limits-section">
     <div class="wrap">
-      <p class="section-kicker">The honest status</p>
-      <h2>A tech demo, not a desktop product.</h2>
+      <p class="section-kicker">Current scope</p>
+      <h2>Working components, with room to grow.</h2>
       <div class="fit-grid">
         <div class="fit-card fit-yes">
-          <p class="fit-label">What it proves</p>
+          <p class="fit-label">Available today</p>
           <ul>
             <li>HopOS apps can build a complete GUI above the OS</li>
             <li>Windows can reconnect after jobs move between nodes</li>
@@ -198,20 +200,20 @@
           </ul>
         </div>
         <div class="fit-card">
-          <p class="fit-label">What it does not promise</p>
+          <p class="fit-label">Still in development</p>
           <ul>
             <li>No production support or stable version contract</li>
             <li>Published app images are arm64 only</li>
             <li>The browser fails on plenty of the web</li>
-            <li>No audio or live application-state handoff yet</li>
+            <li>No audio or live application-state handoff yet: HOP restarts a failed job, and its new instance reconnects</li>
           </ul>
         </div>
       </div>
 
       <div class="surf-source">
         <div>
-          <b>Curious is the right audience.</b>
-          <p>Build it, break it and read it. Every desktop component lives in the open, separate from HopOS itself.</p>
+          <b>Build a window. Run it on another machine.</b>
+          <p>Start with a pixel or scene example, then follow the same protocol through the compositor and input path. Every desktop component is an ordinary HopOS application.</p>
         </div>
         <a class="btn btn-primary" href="https://github.com/xinix00/hop-os-surf">hop-os-surf on GitHub →</a>
       </div>
@@ -224,7 +226,7 @@
     <pre>   (\(\
    ( -.-)     SURF
    o_(")(")   --------------
-              a HopOS tech demo</pre>
+              the distributed desktop</pre>
     <div class="foot-links">
       <a class="l-surf" href="https://github.com/xinix00/hop-os-surf">github.com/xinix00/hop-os-surf</a>
       <a class="l-hopos" href="/hopos/">HopOS · the Go-only OS</a>

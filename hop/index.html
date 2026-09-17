@@ -6,11 +6,11 @@
 <title>HOP — a small orchestrator for the machines you already have</title>
 <meta name="description" content="HOP turns Linux, macOS and HopOS machines into one small cluster. One Go binary schedules processes, Docker containers and bare-metal Go apps, with state in S3.">
 <meta property="og:title" content="HOP — the small orchestrator">
-<meta property="og:description" content="One binary. Three workload types. Cluster state in any S3 bucket.">
+<meta property="og:description" content="One Go program. Three workload types. A committed job snapshot and renewable election lease.">
 <meta property="og:url" content="https://gethop.org/hop/">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=10">
+<link rel="stylesheet" href="/style.css?v=12">
 </head>
 <body class="pg-hop hop-overview">
 
@@ -20,7 +20,7 @@
     <input type="checkbox" id="menu" class="menu-box">
     <label for="menu" class="menu-btn" aria-label="menu">≡</label>
     <div class="topnav">
-      <a href="#different">why HOP</a>
+      <a href="#features">features</a>
       <a href="#recovery">recovery</a>
       <a href="#workloads">workloads</a>
       <a href="#download">download</a>
@@ -30,12 +30,14 @@
   </div>
 </nav>
 
+<div class="family-nav"><div class="wrap"><a href="/hopos/"><b>HopOS</b><span>Run the machine</span></a><a href="/hop/" aria-current="page"><b>HOP</b><span>Run the jobs</span></a><a href="/surf/"><b>SURF</b><span>Bring them to the screen</span></a></div></div>
+
 <header class="hero hop-hero">
   <div class="wrap hero-grid">
     <div>
       <p class="pg-mark">HOP · the orchestrator</p>
       <h1>Run your machines as one small cluster.</h1>
-      <p class="lede">HOP is <strong>one Go binary</strong> that schedules plain processes, Docker containers and bare-metal HopOS apps. Every node can be agent, leader and HTTP API. Shared state is <strong>one object in any S3 bucket</strong>.</p>
+      <p class="lede">HOP is <strong>one Go binary</strong> that schedules plain processes, Docker containers and bare-metal HopOS apps. Every node can be agent, leader and HTTP API. Committed job state is <strong>one snapshot in an S3-compatible store</strong>; a renewable lease selects the leader.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#download">try HOP →</a>
         <a class="btn btn-ghost" href="https://gui.gethop.org">open the GUI</a>
@@ -67,7 +69,7 @@
     <div class="wrap intro-grid">
       <div>
         <p class="section-kicker">What it is</p>
-        <h2>An orchestrator with almost no control plane.</h2>
+        <h2>One process carries the control plane.</h2>
       </div>
       <div class="intro-copy">
         <p>Put the same <code>agent</code> binary on each Linux or macOS machine. The agents elect a leader, accept jobs through one API and keep the requested workloads running.</p>
@@ -145,7 +147,7 @@
           <span class="difference-no">03</span>
           <div>
             <h3>Keep the orchestrator small enough to know.</h3>
-            <p>Leader, scheduler, agent, API and three workload drivers live in one ~7,550-line Go program. Cluster state is one object in S3, not another database cluster.</p>
+            <p>Leader, scheduler, agent and API live in the same Go program. The three workload drivers implement the same job lifecycle. An S3-compatible store can hold the committed job snapshot and election lease.</p>
           </div>
           <p class="difference-result">one inspectable program</p>
         </article>
@@ -196,7 +198,7 @@
   <section id="compare">
     <div class="wrap">
       <p class="section-kicker">Operational surface</p>
-      <h2>The daily tools, with less platform underneath.</h2>
+      <h2>Place it. Update it. Watch it recover.</h2>
       <div class="fit-grid">
         <div class="fit-card fit-yes">
           <p class="fit-label">The daily tools are here</p>
@@ -211,7 +213,7 @@
           <p class="fit-label">What actually gets smaller</p>
           <ul>
             <li>Leader, scheduler, agent and API become one binary</li>
-            <li>etcd or a Raft quorum becomes one object in S3</li>
+            <li>Committed jobs and a renewable election lease use an external store</li>
             <li>Workload definitions become a small HOP job spec</li>
             <li>Processes no longer need a container just to be scheduled</li>
           </ul>
@@ -220,6 +222,7 @@
     </div>
   </section>
 
+  <section id="features"><div class="wrap"><p class="section-kicker">A complete job lifecycle</p><h2>The operations you use every day.</h2><div class="capability-grid"><article><p class="section-kicker">Placement</p><h3>Tell it what the job needs.</h3><p>Instance counts, CPU and memory requests, node affinity and architecture-specific artifacts guide placement. On HopOS, resource ownership reaches down to app cores and memory partitions.</p></article><article><p class="section-kicker">Changes</p><h3>Choose how a job is replaced.</h3><p>Rolling, recreate and blue-green update strategies are part of the job model. Health checks and restart policies govern recovery; live logs travel through the same API.</p></article><article><p class="section-kicker">Visibility</p><h3>Use the CLI or the browser.</h3><p>Inspect agents, jobs and tasks, follow logs and apply changes. The hosted GUI connects to your cluster API. Discovery, routing and metrics remain separate, reusable services.</p></article><article><p class="section-kicker">Recovery</p><h3>Keep desired state outside the node.</h3><p>With S3 persistence configured, a new leader reloads committed jobs and reconciles them with what agents still run. The external store must support the lease backend’s conditional-write semantics.</p></article></div><p class="deep-link">HOP can run on existing Linux and macOS hosts. On HopOS it is integrated into the node; SURF’s launcher and task manager are clients of its API. <a href="/surf/">See that API on a desktop →</a></p></div></section>
   <section id="operate">
     <div class="wrap operate-grid">
       <div>
@@ -234,7 +237,7 @@
       <div class="term term-cli">
         <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span>&nbsp;run · the HOP CLI</div>
         <pre><span class="ps">$</span> run apply --name api --driver docker \
-      --artifact registry.local/api:v12
+      --image registry.local/api:v12
 <span class="out">api: created</span>
 
 <span class="ps">$</span> run agents

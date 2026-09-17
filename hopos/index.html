@@ -6,11 +6,11 @@
 <title>HopOS — a small OS for running Go directly on hardware</title>
 <meta name="description" content="HopOS turns ARM and RISC-V hardware into a small, stateless Go application node. No Linux or containers: each app gets its own cores and hardware-fenced memory.">
 <meta property="og:title" content="HopOS — the Go-only OS">
-<meta property="og:description" content="Run Go directly on hardware, with dedicated cores, fenced memory and no shared kernel.">
+<meta property="og:description" content="Run Go directly on hardware, with dedicated cores, fenced memory and a small shared hardware framework.">
 <meta property="og:url" content="https://gethop.org/hopos/">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=10">
+<link rel="stylesheet" href="/style.css?v=12">
 </head>
 <body class="pg-hopos hopos-overview">
 
@@ -20,7 +20,7 @@
     <input type="checkbox" id="menu" class="menu-box">
     <label for="menu" class="menu-btn" aria-label="menu">≡</label>
     <div class="topnav">
-      <a href="#different">why HopOS</a>
+      <a href="#different">features</a>
       <a href="#architecture">how it works</a>
       <a href="#apps">apps</a>
       <a href="#download">download</a>
@@ -30,12 +30,14 @@
   </div>
 </nav>
 
+<div class="family-nav"><div class="wrap"><a href="/hopos/" aria-current="page"><b>HopOS</b><span>Run the machine</span></a><a href="/hop/"><b>HOP</b><span>Run the jobs</span></a><a href="/surf/"><b>SURF</b><span>Bring them to the screen</span></a></div></div>
+
 <header class="hero hopos-hero">
   <div class="wrap hero-grid">
     <div>
       <p class="pg-mark">HopOS · the Go-only OS</p>
-      <h1>Give every Go app its own piece of the machine.</h1>
-      <p class="lede">HopOS boots directly on ARM and RISC-V hardware. <strong>No Linux, no VM and no container layer.</strong> It turns a board into a small, stateless application node where each app gets physical cores and hardware-fenced memory.</p>
+      <h1>Compute, with fewer moving parts.</h1>
+      <p class="lede">A Go operating system built around a small job: <strong>give an app memory, give it compute, connect it, and reclaim its resources when it finishes.</strong> Run directly on ARM64 and RISC-V, from a small board to a many-core server.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#download">try HopOS →</a>
         <a class="btn btn-ghost" href="#what">see how it works</a>
@@ -51,125 +53,60 @@
         <div><span>Go app</span><small>cores · memory</small></div>
       </div>
       <div class="stack-cage"><span>hardware fence</span><span>hardware fence</span><span>hardware fence</span></div>
-      <div class="stack-os"><b>HopOS</b><span>boot · network · storage · isolation</span></div>
+      <div class="stack-os"><b>HopOS</b><span>ownership · network · devices · lifecycle</span></div>
       <div class="stack-metal">ARM / RISC-V hardware</div>
-      <p>no Linux · no containers · no shared kernel</p>
+      <p>Go apps + runtimes · one small hardware framework</p>
     </div>
   </div>
 
 </header>
 
 <main>
-  <section id="what" class="intro-section">
-    <div class="wrap intro-grid">
-      <div>
-        <p class="section-kicker">What it is</p>
-        <h2>An application node, not a general-purpose computer.</h2>
-      </div>
-      <div class="intro-copy">
-        <p>Compile a Go service for HopOS and hand HOP a signed image plus a small job spec. HopOS downloads it, gives it cores and memory, connects it to the network and keeps it inside that boundary.</p>
-        <p>That narrow job is the point. There are no users, packages, shell services, container daemons or local state to manage.</p>
-      </div>
+  <section id="what" class="intro-section"><div class="wrap intro-grid">
+    <div><p class="section-kicker">The execution model</p><h2>Your app owns its memory.<br>You choose how it uses the cores.</h2></div>
+    <div class="intro-copy"><p>Give a compute job dedicated cores, including multiple cores for one Go runtime. Let explicitly trusted apps share a core cooperatively when that fits the workload. Each resident keeps its own memory partition.</p><p>The framework has one lifecycle: allocate, place, run, wait, wake, stop and release. Memory is reusable after execution has ended; a shared core stays available to its remaining residents.</p></div>
+  </div><div class="wrap flow" aria-label="App lifecycle">
+    <div><span>01</span><b>Allocate</b><p>Claim the app’s memory and compute.</p></div><i aria-hidden="true">→</i>
+    <div><span>02</span><b>Place</b><p>Load the image into its own partition.</p></div><i aria-hidden="true">→</i>
+    <div><span>03</span><b>Run</b><p>Do work; yield when there is none.</p></div><i aria-hidden="true">→</i>
+    <div><span>04</span><b>Release</b><p>Confirm the stop, then return ownership.</p></div>
+  </div></section>
+
+  <section id="different" class="different-section"><div class="wrap"><p class="section-kicker">What it can do</p><h2>A small framework. Useful capabilities.</h2><div class="capability-grid"><article><p class="section-kicker">01 / Compute</p><h3>Dedicated or deliberately shared.</h3><p>Give a busy app whole cores. Put trusted, intermittent workloads together through a sharegroup. Cooperative sharing uses the same lifecycle and preserves separate memory partitions.</p></article><article><p class="section-kicker">02 / Updates</p><h3>Flip the kernel. Keep the apps.</h3><p>FLIP replaces the running kernel and adopts its residents. Apps keep running in their existing memory, with their network connections. The update uses a borrowed memory window; old pool windows become reusable after handover.</p></article><article><p class="section-kicker">03 / Architecture</p><h3>One framework across two ISAs.</h3><p>The ownership rules stay the same on ARM64 and RISC-V. Architecture code supplies protection, context switching and core control; boards supply boot and device wiring.</p></article><article><p class="section-kicker">04 / Go</p><h3>Go from the service to the device.</h3><p>Apps, orchestration, networking and drivers are written in Go, with small assembly boundaries for hardware entry and switching. TamaGo supplies the bare-metal Go runtime. Existing Go packages can come along when their platform needs fit.</p></article></div><p class="deep-link">FLIP has retained resident TCP connections across repeated ARM updates and four consecutive RISC-V updates. The LicheeRV candidate returns to its original kernel window on a second flip and then runs cloudflared, Stulp and its plugins together on one app core. See the recorded verification scope. <a href="/hopos/docs/#status">See the current verification scope →</a></p></div></section>
+
+  <section id="architecture" class="signal-section"><div class="wrap">
+    <p class="section-kicker">One path for work</p><h2>One network entry. One doorbell per resident.</h2>
+    <p class="section-lede">The app’s system calls travel over the same network path as its other traffic. One caller at a time serializes those calls. The node routes the request to the service that owns the device.</p>
+    <div class="signal-path" aria-label="Receive path: network device to node switch, resident receive ring and app doorbell">
+      <div><small>receive</small><b>Network device</b></div><span aria-hidden="true">→</span>
+      <div><small>route</small><b>Node switch</b></div><span aria-hidden="true">→</span>
+      <div><small>publish</small><b>Resident RX ring</b></div><span aria-hidden="true">→</span>
+      <div><small>notify</small><b>One doorbell</b></div>
     </div>
-
-    <div class="wrap flow" aria-label="How an app reaches HopOS">
-      <div><span>01</span><b>Build</b><p>Compile your Go app for arm64 or riscv64.</p></div>
-      <i aria-hidden="true">→</i>
-      <div><span>02</span><b>Place</b><p>HOP sends the job to a matching node.</p></div>
-      <i aria-hidden="true">→</i>
-      <div><span>03</span><b>Fence</b><p>HopOS assigns cores, memory and network access.</p></div>
-      <i aria-hidden="true">→</i>
-      <div><span>04</span><b>Run</b><p>The app talks through ten small OS operations.</p></div>
+    <div class="intro-grid"><div><h3>Publish first. Then ring.</h3><p>The pump arms its doorbell and rechecks for pending work before sleeping. A notification tells the resident to look; the ring holds the actual work. Trusted neighbors get their turn when a resident yields.</p></div>
+    <div><h3>The IRQ goal is equally small.</h3><p>One network IRQ feeds this receive path. QEMU virt has the IRQ implementation; physical boards currently poll. Per-board network IRQ integration is the next power-efficiency step. This describes network reception; architecture timers still handle their own duties.</p></div></div>
+    <p class="deep-link"><a href="/hopos/docs/#networking">Follow the caller and doorbell →</a> · <a href="/hopos/docs/#lifecycle">Read the ownership contract →</a></p>
+  </div></section>
+  <section id="size"><div class="wrap">
+    <p class="section-kicker">Small enough to inspect</p><h2>The common framework stays common.</h2>
+    <div class="measure-strip">
+      <div><strong>11,214</strong><span>shared metal source lines</span></div>
+      <div><strong>2 ISAs</strong><span>ARM64 and RISC-V</span></div>
+      <div><strong>~4,000 MB/s</strong><span>M4 disk writes, developer measurement</span></div>
     </div>
-  </section>
-
-  <section id="different" class="different-section">
-    <div class="wrap">
-      <p class="section-kicker">Why it exists</p>
-      <h2>Less code means fewer places for bugs to wait.</h2>
-      <div class="difference-list">
-        <article>
-          <span class="difference-no">01</span>
-          <div>
-            <h3>Start before Linux.</h3>
-            <p>A conventional node already trusts a complex bootloader before it starts a ~30-million-line Linux kernel — then adds systemd, libc and a container runtime. AI makes large patch rounds easier to produce; it does not make that surface smaller. HopOS includes its own boot path; a complete node is about 11,300 lines.</p>
-          </div>
-          <p class="difference-result">a smaller bug surface</p>
-        </article>
-        <article>
-          <span class="difference-no">02</span>
-          <div>
-            <h3>Keep dependencies visible.</h3>
-            <p><a href="https://github.com/xinix00/lean">Lean</a> contains the network stack, TLS, HTTP, S3 and ELF support in one readable Go module. It can be the only library dependency of a HopOS app; it does not have to be — ordinary Go packages remain your choice.</p>
-          </div>
-          <p class="difference-result">no dependency pile</p>
-        </article>
-        <article>
-          <span class="difference-no">03</span>
-          <div>
-            <h3>Change the boundary, not just the line count.</h3>
-            <p>Apps do not share a kernel or an address space. HopOS gives each app cores and memory, then uses the processor’s own translation and protection hardware to make everything outside that partition unreachable.</p>
-          </div>
-          <p class="difference-result">hardware, not policy</p>
-        </article>
-      </div>
-
-      <details id="architecture" class="architecture-details">
-        <summary>How does that work? <span>open the technical version</span></summary>
-        <div class="architecture-body">
-          <p class="architecture-lede">HopOS owns the privilege level above the apps: EL2 on ARM and machine mode on RISC-V. It loads an app into a memory partition, asks the processor to enforce that partition, and only then starts the app at the lower privilege level.</p>
-
-          <div class="architecture-copy">
-            <article>
-              <h3>Load one relocatable slot</h3>
-              <p>The node streams the signed app image into its assigned partition. Address translation lets every slot use the same link address, so one artifact per architecture can run in any slot.</p>
-            </article>
-            <article>
-              <h3>Fence it before entry</h3>
-              <p>ARM uses a stage-2 page table with its own VMID. RISC-V uses a PMP whitelist for the boundary and an Sv39 page table for relocation. If HopOS cannot establish the cage, it does not start the app.</p>
-            </article>
-            <article>
-              <h3>Keep devices on the other side</h3>
-              <p>The app talks to HopOS through a control page and two rings. The node programs network and storage devices; an app cannot invent a syscall or point DMA outside its cage.</p>
-            </article>
-            <article>
-              <h3>Give the resource back cleanly</h3>
-              <p>On ARM, HopOS revokes the stage-2 mapping and parks the core. On RISC-V, it resets the hart. The boundary belongs to the hardware, so stopping one slot does not require cooperation from its app.</p>
-            </article>
-          </div>
-
-          <div class="architecture-table-wrap">
-            <table>
-              <thead>
-                <tr><th></th><th>ARM</th><th>RISC-V</th></tr>
-              </thead>
-              <tbody>
-                <tr><th>HopOS owns</th><td>EL2</td><td>machine mode</td></tr>
-                <tr><th>app runs in</th><td>EL1</td><td>supervisor mode</td></tr>
-                <tr><th>memory boundary</th><td>stage-2 table + VMID</td><td>PMP whitelist</td></tr>
-                <tr><th>relocation</th><td>the same stage-2 table</td><td>Sv39 page table</td></tr>
-                <tr><th>stop</th><td>revoke mapping + park core</td><td>reset hart</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-          <p class="architecture-note">By default an app also gets whole physical cores, with no time-sharing between strangers. Trusted apps may explicitly opt into a sharegroup; the memory cage stays in place.</p>
-          <p class="architecture-doc-link"><a href="/hopos/docs/#technical/isolation">Read the full isolation design →</a></p>
-        </div>
-      </details>
-    </div>
-  </section>
-
+    <p>Keep one implementation of the common rules and small hardware-specific boundaries. The per-board headless metal source selection is approximately 14.6–17.9k lines, including that shared code. Lean adds 10,744 selected networking and support lines.</p>
+    <details class="architecture-details"><summary>What these numbers include <span>scope and provenance</span></summary><div class="architecture-body"><p>Counted from the v2.2.2 source with <code>tools/loc.go</code> on 6 September 2026: nonblank, noncomment Go and assembly lines in the selected source files. These are source-file counts, not a count of every linked dependency or executed instruction. Go’s runtime and standard library, TamaGo, HOP and other dependencies are outside the metal/Lean figures; desktop apps are separate.</p><p>The approximately 4000 MB/s M4 write result was reported by the developer. Workload, cache policy and durability conditions were not recorded in the review, so it is an indicative measurement rather than a cross-platform benchmark.</p><a href="/hopos/docs/#measurements">Measurements and conditions →</a></div></details>
+  </div></section>
   <section id="fit" class="use-section">
     <div class="wrap">
       <p class="section-kicker">One OS, two ways to use it</p>
-      <h2>Boot your own programs. Or give a fleet one shared state.</h2>
+      <h2>One node or a fleet. The same apps.</h2>
 
       <div class="use-modes">
         <article>
           <p class="use-label">one machine</p>
           <h3>Put your programs on it and power on.</h3>
-          <p>Jobs in <a href="/hopos/docs/#config"><code>hopos.init[]</code></a> live on the boot medium. Without S3, every boot is clean: HopOS starts that exact set of Go apps again.</p>
+          <p>Jobs in <a href="/hopos/docs/#configuration"><code>hopos.init[]</code></a> live on the boot medium. Without S3, every boot is clean: HopOS starts that exact set of Go apps again.</p>
           <div class="use-flow" aria-label="The boot medium starts HopOS, which starts your apps">
             <span>boot medium</span><i>→</i><b>HopOS</b><i>→</i><span>your apps</span>
           </div>
@@ -191,44 +128,12 @@
     </div>
   </section>
 
-  <section id="apps" class="apps-section">
-    <div class="wrap">
-      <div class="apps-intro">
-        <div>
-          <p class="section-kicker">The Go-first ecosystem</p>
-          <h2>Real apps and useful tools.</h2>
-        </div>
-        <p>Stulp is a real HopOS workload. GoNet is companion tooling for running .NET test work from Go, on your own development machine.</p>
-      </div>
-
-      <div class="project-grid">
-        <article class="project-card project-featured">
-          <p class="project-type">home automation · production app</p>
-          <h3>Stulp</h3>
-          <p>A home controller whose ten plugins continuously pull and poll on a 256 MB HopOS board. It is also the endurance rig: a week of work without going out of memory.</p>
-          <a class="btn btn-primary" href="https://github.com/xinix00/stulp">Stulp on GitHub →</a>
-        </article>
-        <article class="project-card project-featured">
-          <p class="project-type">.NET runner · test work</p>
-          <h3>GoNet</h3>
-          <p>A .NET runner written in pure Go, powered by wazero. It runs .NET test suites on your own machine without installing the .NET runtime — especially useful for testing repositories from a Go toolchain.</p>
-          <a class="btn btn-primary" href="https://github.com/xinix00/gonet">GoNet on GitHub →</a>
-        </article>
-      </div>
-
-      <div class="app-shelf hopos-app-shelf" aria-label="More apps running on HopOS">
-        <div><b>cloudflared</b><span>Cloudflare’s Go client, running in a slot</span></div>
-        <div><b>hoplb + hopdns</b><span>cluster routing and service discovery</span></div>
-        <div><b>hopprom</b><span>per-app metrics without a node exporter</span></div>
-      </div>
-      <a class="banner" href="/surf/">
-        <span class="banner-name">SURF</span>
-        <span class="banner-sub">The GUI for HopOS</span>
-        <span class="badge">tech demo</span>
-      </a>
-      <p class="deep-link">The smaller infrastructure apps get no privileges either. <a href="https://github.com/xinix00/HopOS/releases/tag/apps">Browse all signed HopOS apps →</a></p>
-    </div>
-  </section>
+  <section id="apps" class="apps-section"><div class="wrap">
+    <p class="section-kicker">Software running on the framework</p><h2>Go-only does not mean starting every app from scratch.</h2>
+    <p class="section-lede">A service, a tunnel, a home controller or a desktop: the app model stays the same. Each image includes its own Go runtime and the packages it needs.</p>
+<div class="capability-grid"><article><p class="section-kicker">Home automation</p><h3>Stulp</h3><p>A Go home controller with device integrations, running on HopOS. <a href="https://github.com/xinix00/stulp">Explore Stulp →</a></p></article><article><p class="section-kicker">Connectivity</p><h3>cloudflared</h3><p>Cloudflare’s Go tunnel client, adapted as a HopOS app. The repository includes standard and Lean variants. <a href="https://github.com/xinix00/HopOS/tree/main/apps">Browse the apps →</a></p></article><article><p class="section-kicker">Cluster services</p><h3>Routing, DNS and metrics.</h3><p>hoplb, hopdns and hopprom provide load balancing, discovery and Prometheus integration as separate applications. <a href="/hop/">See the HOP workflow →</a></p></article><article><p class="section-kicker">Display</p><h3>SURF</h3><p>A compositor, task manager, browser and Game Boy emulator running as apps. Windows can come from different nodes. <a href="/surf/">See the desktop →</a></p></article></div>
+    <p class="deep-link">Go libraries still need compatible platform assumptions: arbitrary Linux binaries are not HopOS apps. <a href="/hopos/docs/#apps">Build and run your own Go app →</a></p>
+  </div></section>
 
   <section id="hardware">
     <div class="wrap hardware-grid">
@@ -241,7 +146,8 @@
         <span><b>Ampere Altra</b><small>128-core reference · UEFI</small></span>
         <span><b>Raspberry Pi 4 + 5</b><small>arm64</small></span>
         <span><b>Radxa Zero 3E</b><small>arm64 + GUI</small></span>
-        <span><b>LicheeRV Nano</b><small>riscv64 · ~€15</small></span>
+        <span><b>Radxa Orion O6N</b><small>arm64 · UEFI</small></span>
+        <span><b>LicheeRV Nano</b><small>riscv64 · compact 256 MB board</small></span>
         <span><b>Mac mini M4</b><small>iBoot → HopOS bootloader</small></span>
         <span><b>UEFI arm64</b><small>firmware → HopOS bootloader · hardware + QEMU</small></span>
       </div>
@@ -322,22 +228,6 @@
   <div class="wrap"><p class="foot-copy">© 2026 gethop.org</p></div>
 </footer>
 
-<script>
-(() => {
-  const architecture = document.getElementById('architecture');
-  if (!architecture) return;
-
-  const revealArchitecture = () => {
-    if (location.hash === '#architecture') architecture.open = true;
-  };
-
-  document.querySelectorAll('a[href="#architecture"]').forEach(link => {
-    link.addEventListener('click', () => { architecture.open = true; });
-  });
-  window.addEventListener('hashchange', revealArchitecture);
-  revealArchitecture();
-})();
-</script>
 
 </body>
 </html>

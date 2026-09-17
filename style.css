@@ -1,9 +1,5 @@
-/* gethop.org — two products, two voices, one dark habitat.
-   HopOS speaks phosphor green (it IS the console color of the OS);
-   HOP speaks copper (the operator's tool — the metal in bare metal).
-   The SURF banner borrows the blue of its own compositor — cooler than both,
-   because it is a thing that runs on HopOS, not a third product.
-   Each page sets --acc via a body class; everything inherits its voice. */
+/* gethop.org — one family: HopOS green, HOP copper, SURF blue.
+   Static feature pages and the shared documentation viewer. */
 :root {
   --bg: #0b0f14;
   --panel: #10161d;
@@ -991,3 +987,61 @@ footer pre {
   .surf-source { align-items: flex-start; flex-direction: column; }
   .surf-source .btn { width: 100%; text-align: center; }
 }
+
+/* Shared feature overview: machine → jobs → screen. */
+.family-nav { border-bottom: 1px solid var(--line); background: var(--panel-2); }
+.family-nav .wrap { display: flex; }
+.family-nav a { flex: 1; display: flex; align-items: baseline; gap: 12px; padding: 15px 0; color: var(--muted); font-size: 13px; }
+.family-nav a b { font-family: var(--mono); color: var(--text); }
+.family-nav a[aria-current] { border-bottom: 2px solid var(--acc); }
+.family-nav a[aria-current] b { color: var(--acc); }
+.capability-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; margin-top: 34px; }
+.capability-grid article { border-top: 1px solid var(--line); padding: 27px 0 20px; }
+.capability-grid article h3 { font-size: 23px; line-height: 1.3; margin: 10px 0 14px; }
+.capability-grid article p:last-child { color: var(--muted); margin-bottom: 0; }
+.signal-section { background: var(--panel-2); }
+.signal-path { display: flex; align-items: center; gap: 18px; margin: 36px 0 40px; }
+.signal-path div { flex: 1; border: 1px solid var(--line); border-top: 2px solid var(--acc); padding: 18px; background: var(--bg); }
+.signal-path small { display: block; color: var(--muted); font-family: var(--mono); margin-bottom: 5px; }
+.signal-path b { display: block; font-size: 16px; }
+.signal-path > span { color: var(--acc); }
+.measure-strip { display: grid; grid-template-columns: repeat(3, 1fr); margin: 34px 0 28px; border-block: 1px solid var(--line); }
+.measure-strip > div { padding: 25px 18px 25px 0; }
+.measure-strip strong { display: block; color: var(--acc); font: 600 clamp(24px, 3vw, 35px)/1.3 var(--mono); letter-spacing: -.06em; }
+.measure-strip span { display: block; color: var(--muted); font-size: 13px; margin-top: 8px; }
+.home-nav { display: flex; gap: 24px; margin-left: auto; }
+.home-nav a { color: var(--text); }
+.home-overview .hero { padding: 80px 0 65px; }
+.home-overview h1 { max-width: 940px; font-size: clamp(38px, 6.8vw, 74px); line-height: 1.08; letter-spacing: -.055em; }
+.home-overview .lede { max-width: 710px; }
+.home-soft { color: var(--muted); }
+.home-products { padding-top: 0; }
+.family-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.family-card { --card: var(--leaf); color: var(--text); border: 1px solid var(--line); border-top: 2px solid var(--card); background: var(--panel); padding: 27px 24px; display: flex; flex-direction: column; transition: border-color .15s; }
+.family-card:hover { text-decoration: none; border-color: var(--card); }
+.card-hop { --card: var(--copper); }.card-surf { --card: var(--wave); }
+.family-card .section-kicker, .family-card h2, .family-card .go { color: var(--card); }
+.family-card h2 { font: 650 36px/1.2 var(--mono); margin: 16px 0 20px; }
+.family-card h3 { font-size: 21px; line-height: 1.4; margin: 0; }
+.family-card p { color: var(--muted); font-size: 15px; }
+.family-card .card-detail { color: var(--text); font-size: 12px; font-family: var(--mono); margin-top: auto; padding: 18px 0; border-top: 1px solid var(--line); }
+.family-card .go { font-size: 14px; margin-top: 14px; }
+.home-proof { background: var(--panel-2); }
+.proof-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 24px; }
+.proof-links a { color: var(--text); }
+.proof-links span { display: block; color: var(--muted); margin-top: 8px; font-size: 14px; }
+@media (max-width: 800px) {
+  .family-nav a { display: block; }.family-nav a span { display: block; font-size: 11px; margin-top: 3px; }
+  .family-cards { grid-template-columns: 1fr; }.family-card h2 { margin-bottom: 12px; }
+  .family-card .card-detail { margin-top: 12px; }.home-overview .hero { padding: 52px 0; }
+  .proof-links { grid-template-columns: 1fr; }
+  .signal-path { display: grid; grid-template-columns: 1fr; gap: 10px; }.signal-path > span { transform: rotate(90deg); justify-self: center; }
+}
+@media (max-width: 560px) {
+  .capability-grid { grid-template-columns: 1fr; }.measure-strip { grid-template-columns: 1fr; }
+  .measure-strip > div + div { border-top: 1px solid var(--line); }.home-nav { gap: 14px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .family-card { transition: none; } }
+/* Grid children must allow the example terminal to scroll within its card. */
+.start-grid > div { min-width: 0; }
+.home-overview h1 { font-size: clamp(36px, 6vw, 64px); }

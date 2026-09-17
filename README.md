@@ -1,12 +1,19 @@
 # gethop.org
 
-De productsite voor **HopOS** (the Go-only OS) en **HOP** (the orchestrator).
-Statisch, nul dependencies: drie pagina's + één stylesheet.
+The feature and documentation site for **HopOS**, **HOP** and **SURF**. Static HTML and CSS; the documentation viewer reads Markdown from each project's repository and uses the bundled Mermaid renderer for diagrams.
 
-- `/` — de keuze (twee deuren)
-- `/hopos/` — HopOS-verhaal (groen)
-- `/hop/` — HOP-verhaal (koper)
+- `/` — how the three projects fit together
+- `/hopos/` — compute framework, ownership, FLIP, networking, apps and hardware
+- `/hop/` — placement, workload drivers, updates, operations and recovery
+- `/surf/` — distributed windows, display protocol and desktop applications
+- `/hopos/docs/`, `/hop/docs/` — repository-backed documentation
 
-Deploy: GitHub Pages (branch `main`, root). `CNAME` wijst naar gethop.org.
-Cijfers op de site zijn afgerond (~) zodat ze waar blijven over builds heen;
-de telscripts staan in de HopOS-repo.
+## Local preview
+
+```sh
+python3 -m http.server 8765 --bind 127.0.0.1
+```
+
+Open `http://127.0.0.1:8765/`. Documentation content is fetched from the repositories' `main` branches; unpublished local docs do not appear automatically.
+
+GitHub Pages publishes the root of `main`; `CNAME` selects gethop.org. See [PROPOSAL.md](PROPOSAL.md) for the current uncommitted proposal, content decisions and measurement scope.

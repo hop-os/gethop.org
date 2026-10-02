@@ -4,7 +4,8 @@
 
 - [x] **LicheeRV framework:** startup OOM fixed; four FLIPs preserve the resident and one continuous TCP socket; double FLIP reuses the original window and the full three-app workload fits afterward. Candidate hashes and scope are recorded in HopOS logbook L53.
 - [x] **LicheeRV application integration:** Derek confirms Stulp works correctly with no observed regression after the ordered L59 deployment (HopOS L60). Stulp uses the configured 10.100.0.2 with unchanged job definitions; this records operator acceptance of that setup.
-- [ ] **M4 write throughput:** reproduce the approximately 4000 MB/s result, record the workload and cache/flush conditions, and replace the developer-reported wording in `hopos/index.html` and the measurements documentation with the verified result.
+- [x] **Measured storage highlight:** replace the developer-attributed headline with the recorded O6N result: 3056.8 MB/s raw NVMe writes, including workload/cache scope and app-path measurements (18 September 2026).
+- [ ] **M4 write throughput:** reproduce the approximately 4000 MB/s result and record workload/cache/flush conditions before presenting that specific M4 figure as independently verified. Non-disruptive tests on 18 September measured 1598–1657 MB/s writes through the full app storage path; the boot-only raw benchmark was not invoked.
 
 The canonical acceptance steps and evidence live in HopOS: [release plan](../hop-os/docs/v1/technical/release-afronding.md) and [logbook](../hop-os/docs/v1/technical/release-logboek.md), entry L46. Complete these follow-ups before final publication wording is signed off. Physical network IRQ remains a later task.
 

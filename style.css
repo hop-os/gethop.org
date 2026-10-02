@@ -668,7 +668,7 @@ footer pre {
 .direct-downloads summary::marker { color: var(--acc); }
 .direct-downloads > p { max-width: none; margin: 0; padding: 0 22px 18px; color: var(--muted); font-size: 13.5px; }
 .image-links { border-top: 1px solid var(--line); }
-.image-links div { display: grid; grid-template-columns: 1fr 100px 100px; gap: 14px; padding: 12px 22px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.image-links div { display: grid; grid-template-columns: 1fr 100px 100px 100px; gap: 14px; padding: 12px 22px; border-bottom: 1px solid var(--line); font-size: 13px; }
 .image-links div:last-child { border-bottom: 0; }
 .image-links b { font-weight: 500; color: var(--muted); }
 .image-links a, .image-links span { font-family: var(--mono); }
@@ -730,7 +730,7 @@ footer pre {
   .app-shelf div:last-child { border-bottom: 0; }
   .project-card { min-height: 0; }
   .project-card .btn { margin-top: 4px; }
-  .image-links div { grid-template-columns: 1fr auto auto; }
+  .image-links div { grid-template-columns: 1fr auto auto auto; }
   .architecture-details summary span { display: none; }
 }
 
@@ -991,9 +991,11 @@ footer pre {
 /* Shared feature overview: machine → jobs → screen. */
 .family-nav { border-bottom: 1px solid var(--line); background: var(--panel-2); }
 .family-nav .wrap { display: flex; }
-.family-nav a { flex: 1; display: flex; align-items: baseline; gap: 12px; padding: 15px 0; color: var(--muted); font-size: 13px; }
-.family-nav a b { font-family: var(--mono); color: var(--text); }
-.family-nav a[aria-current] { border-bottom: 2px solid var(--acc); }
+.family-nav a { flex: 1; display: flex; align-items: baseline; gap: 12px; padding: 15px 0; color: var(--muted); font-size: 13px; border-bottom: 2px solid transparent; transition: border-color .15s, color .15s; }
+.family-nav a b { font-family: var(--mono); color: var(--text); transition: color .15s; }
+.family-nav a:hover { text-decoration: none; color: var(--text); border-bottom-color: var(--muted); }
+.family-nav a:hover b { color: var(--text); }
+.family-nav a[aria-current], .family-nav a[aria-current]:hover { border-bottom-color: var(--acc); }
 .family-nav a[aria-current] b { color: var(--acc); }
 .capability-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 40px; margin-top: 34px; }
 .capability-grid article { border-top: 1px solid var(--line); padding: 27px 0 20px; }

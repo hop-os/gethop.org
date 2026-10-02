@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HopOS — a small OS for running Go directly on hardware</title>
-<meta name="description" content="HopOS turns ARM and RISC-V hardware into a small, stateless Go application node. No Linux or containers: each app gets its own cores and hardware-fenced memory.">
-<meta property="og:title" content="HopOS — the Go-only OS">
-<meta property="og:description" content="Run Go directly on hardware, with dedicated cores, fenced memory and a small shared hardware framework.">
+<title>HopOS — a bare-metal OS in Rust: one static binary is the OS</title>
+<meta name="description" content="HopOS turns ARM and RISC-V hardware into a small application node. No Linux, no containers: one static Rust binary is the OS, and each app gets its own cores and hardware-fenced memory. Apps are written in Rust or in Go, against one ABI.">
+<meta property="og:title" content="HopOS — bare metal, in Rust">
+<meta property="og:description" content="Run apps directly on hardware, with dedicated cores, fenced memory, a kernel that updates in place and a Go-compatible app ABI.">
 <meta property="og:url" content="https://gethop.org/hopos/">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=12">
+<link rel="stylesheet" href="/style.css?v=14">
 </head>
 <body class="pg-hopos hopos-overview">
 
@@ -35,9 +35,9 @@
 <header class="hero hopos-hero">
   <div class="wrap hero-grid">
     <div>
-      <p class="pg-mark">HopOS · the Go-only OS</p>
+      <p class="pg-mark">HopOS · bare metal, in Rust</p>
       <h1>Compute, with fewer moving parts.</h1>
-      <p class="lede">A Go operating system built around a small job: <strong>give an app memory, give it compute, connect it, and reclaim its resources when it finishes.</strong> Run directly on ARM64 and RISC-V, from a small board to a many-core server.</p>
+      <p class="lede">An operating system written in Rust around a small job: <strong>give an app memory, give it compute, connect it, and reclaim its resources when it finishes.</strong> No Linux underneath. One static binary is the OS, on ARM64 and RISC-V, from a small board to a many-core server.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#download">try HopOS →</a>
         <a class="btn btn-ghost" href="#what">see how it works</a>
@@ -45,17 +45,17 @@
       <p class="cross">HOP decides what runs where · <a class="to-hop" href="/hop/">meet the orchestrator →</a></p>
     </div>
 
-    <div class="stack" role="img" aria-label="A short HopOS stack: isolated Go apps, HopOS and the hardware">
+    <div class="stack" role="img" aria-label="A short HopOS stack: isolated apps, HopOS and the hardware">
       <div class="stack-label">the entire stack</div>
       <div class="stack-apps">
-        <div><span>Go app</span><small>cores · memory</small></div>
-        <div><span>Go app</span><small>cores · memory</small></div>
+        <div><span>Rust app</span><small>cores · memory</small></div>
+        <div><span>Rust app</span><small>cores · memory</small></div>
         <div><span>Go app</span><small>cores · memory</small></div>
       </div>
       <div class="stack-cage"><span>hardware fence</span><span>hardware fence</span><span>hardware fence</span></div>
-      <div class="stack-os"><b>HopOS</b><span>ownership · network · devices · lifecycle</span></div>
+      <div class="stack-os"><b>HopOS</b><span>cage · switch · storage · clock</span></div>
       <div class="stack-metal">ARM / RISC-V hardware</div>
-      <p>Go apps + runtimes · one small hardware framework</p>
+      <p>one kernel, one orchestrator · Rust apps and Go apps side by side</p>
     </div>
   </div>
 
@@ -64,38 +64,38 @@
 <main>
   <section id="what" class="intro-section"><div class="wrap intro-grid">
     <div><p class="section-kicker">The execution model</p><h2>Your app owns its memory.<br>You choose how it uses the cores.</h2></div>
-    <div class="intro-copy"><p>Give a compute job dedicated cores, including multiple cores for one Go runtime. Let explicitly trusted apps share a core cooperatively when that fits the workload. Each resident keeps its own memory partition.</p><p>The framework has one lifecycle: allocate, place, run, wait, wake, stop and release. Memory is reusable after execution has ended; a shared core stays available to its remaining residents.</p></div>
+    <div class="intro-copy"><p>Give a compute job dedicated cores, including several cores for one app. Let explicitly trusted apps share a core cooperatively when that fits the workload. Each resident keeps its own hardware-enforced memory partition. There is no shell, no libc, no userland and no processes.</p><p>The kernel is mechanism only: it owns the cage, the switch, the storage and the clock. HOP, the orchestrator, is the first resident, an app with one privilege no other app has: the right to place, stop and replace apps. HOP owns the policy.</p></div>
   </div><div class="wrap flow" aria-label="App lifecycle">
     <div><span>01</span><b>Allocate</b><p>Claim the app’s memory and compute.</p></div><i aria-hidden="true">→</i>
-    <div><span>02</span><b>Place</b><p>Load the image into its own partition.</p></div><i aria-hidden="true">→</i>
-    <div><span>03</span><b>Run</b><p>Do work; yield when there is none.</p></div><i aria-hidden="true">→</i>
+    <div><span>02</span><b>Place</b><p>Stream the image into its own partition.</p></div><i aria-hidden="true">→</i>
+    <div><span>03</span><b>Run</b><p>Do work; park the core when there is none.</p></div><i aria-hidden="true">→</i>
     <div><span>04</span><b>Release</b><p>Confirm the stop, then return ownership.</p></div>
   </div></section>
 
-  <section id="different" class="different-section"><div class="wrap"><p class="section-kicker">What it can do</p><h2>A small framework. Useful capabilities.</h2><div class="capability-grid"><article><p class="section-kicker">01 / Compute</p><h3>Dedicated or deliberately shared.</h3><p>Give a busy app whole cores. Put trusted, intermittent workloads together through a sharegroup. Cooperative sharing uses the same lifecycle and preserves separate memory partitions.</p></article><article><p class="section-kicker">02 / Updates</p><h3>Flip the kernel. Keep the apps.</h3><p>FLIP replaces the running kernel and adopts its residents. Apps keep running in their existing memory, with their network connections. The update uses a borrowed memory window; old pool windows become reusable after handover.</p></article><article><p class="section-kicker">03 / Architecture</p><h3>One framework across two ISAs.</h3><p>The ownership rules stay the same on ARM64 and RISC-V. Architecture code supplies protection, context switching and core control; boards supply boot and device wiring.</p></article><article><p class="section-kicker">04 / Go</p><h3>Go from the service to the device.</h3><p>Apps, orchestration, networking and drivers are written in Go, with small assembly boundaries for hardware entry and switching. TamaGo supplies the bare-metal Go runtime. Existing Go packages can come along when their platform needs fit.</p></article></div><p class="deep-link">FLIP has retained resident TCP connections across repeated ARM updates and four consecutive RISC-V updates. The LicheeRV candidate returns to its original kernel window on a second flip and then runs cloudflared, Stulp and its plugins together on one app core. See the recorded verification scope. <a href="/hopos/docs/#status">See the current verification scope →</a></p></div></section>
+  <section id="different" class="different-section"><div class="wrap"><p class="section-kicker">What it can do</p><h2>A small kernel. Useful capabilities.</h2><div class="capability-grid"><article><p class="section-kicker">01 / Compute</p><h3>Dedicated or deliberately shared.</h3><p>Give a busy app whole cores, or several cores for one SMP app. Put trusted, intermittent workloads together in a sharegroup on one core. Where a board is short on cores, HOP itself can share the OS core with the kernel. Every form uses the same lifecycle and keeps separate memory partitions.</p></article><article><p class="section-kicker">02 / Updates</p><h3>Flip the kernel. Keep the apps.</h3><p>A running node replaces its kernel without a reboot. The apps, HOP, their connections through the switch, the NAT flows and the volumes stay; only the kernel changes. An outgoing TCP connection of an app runs on across the jump. A cold flip, for a kernel with a different switch code, stops the apps first and places them again.</p></article><article><p class="section-kicker">03 / Rust</p><h3>Written in Rust, by the book.</h3><p>All state has exactly one owner, and that owner is a task: no mutexes, messages instead. The kernel tree denies <code>unwrap</code>, <code>panic</code> and <code>todo</code> through lints; every <code>unsafe</code> block carries its reason. Each layer is a crate, and the import direction is a build rule the gate enforces. Boot, vectors and the switch are the only assembly.</p></article><article><p class="section-kicker">04 / Go compatibility</p><h3>Rust or Go. Same ABI.</h3><p>An app is one ELF that speaks the slot ABI: the same tail, control page, rings and call frames whichever language built it. A Go image from the TamaGo toolchain and a Rust image from the app library are placed, connected and stopped by the same job spec. HOP sees no difference. Both SDKs are maintained in the tree.</p></article></div><p class="deep-link">The first green v3 node on hardware was a Raspberry Pi 5 on 30 September 2026, including the first in-place kernel update on real hardware. Since then the Pi 4, the Radxa Zero 3E, the Orion O6N and the Mac mini M4 have repeated it with their apps and connections intact. <a href="/hopos/docs/#flip">Read the flip procedure →</a></p></div></section>
 
   <section id="architecture" class="signal-section"><div class="wrap">
     <p class="section-kicker">One path for work</p><h2>One network entry. One doorbell per resident.</h2>
-    <p class="section-lede">The app’s system calls travel over the same network path as its other traffic. One caller at a time serializes those calls. The node routes the request to the service that owns the device.</p>
+    <p class="section-lede">Each app has its own network stack on a node-internal LAN. The kernel’s switch routes between residents, publishes ports to the uplink and masquerades outbound traffic. The app’s system calls travel over the same path as its other traffic, one caller at a time.</p>
     <div class="signal-path" aria-label="Receive path: network device to node switch, resident receive ring and app doorbell">
       <div><small>receive</small><b>Network device</b></div><span aria-hidden="true">→</span>
       <div><small>route</small><b>Node switch</b></div><span aria-hidden="true">→</span>
       <div><small>publish</small><b>Resident RX ring</b></div><span aria-hidden="true">→</span>
       <div><small>notify</small><b>One doorbell</b></div>
     </div>
-    <div class="intro-grid"><div><h3>Publish first. Then ring.</h3><p>The pump arms its doorbell and rechecks for pending work before sleeping. A notification tells the resident to look; the ring holds the actual work. Trusted neighbors get their turn when a resident yields.</p></div>
-    <div><h3>The IRQ goal is equally small.</h3><p>One network IRQ feeds this receive path. QEMU virt has the IRQ implementation; physical boards currently poll. Per-board network IRQ integration is the next power-efficiency step. This describes network reception; architecture timers still handle their own duties.</p></div></div>
-    <p class="deep-link"><a href="/hopos/docs/#networking">Follow the caller and doorbell →</a> · <a href="/hopos/docs/#lifecycle">Read the ownership contract →</a></p>
+    <div class="intro-grid"><div><h3>Publish first. Then ring.</h3><p>The switch writes frames into the resident’s ring and rings its doorbell. A notification tells the resident to look; the ring holds the actual work. Between two apps on one node the switch moves frames from ring to ring, which is why app-to-app traffic on a Mac mini M4 reaches 6,380 MB/s.</p></div>
+    <div><h3>Interrupts where the board has them.</h3><p>The network device feeds this path through one interrupt: MSI-X on the Pi 5 and, via the GICv3 ITS, on the Orion O6N; a wired interrupt on the Radxa Zero 3E; virtio on QEMU. Boards whose NIC offers no usable line, such as the Pi 4, the Altra and the M4, poll deliberately, with the reason on the console.</p></div></div>
+    <p class="deep-link"><a href="/hopos/docs/#boards">Follow the boards and their interrupts →</a> · <a href="/hopos/docs/#storage-sync">Read the storage barrier contract →</a></p>
   </div></section>
   <section id="size"><div class="wrap">
-    <p class="section-kicker">Small enough to inspect</p><h2>The common framework stays common.</h2>
+    <p class="section-kicker">Measured on hardware</p><h2>Native speed is the point.</h2>
     <div class="measure-strip">
-      <div><strong>11,214</strong><span>shared metal source lines</span></div>
-      <div><strong>2 ISAs</strong><span>ARM64 and RISC-V</span></div>
-      <div><strong>~4,000 MB/s</strong><span>M4 disk writes, developer measurement</span></div>
+      <div><strong>6,380 MB/s</strong><span>app to app through the switch, Mac mini M4</span></div>
+      <div><strong>4,950 MB/s</strong><span>raw NVMe writes, Mac mini M4</span></div>
+      <div><strong>175,000 IOPS</strong><span>random 4 KiB reads, sixteen in flight, Mac mini M4</span></div>
     </div>
-    <p>Keep one implementation of the common rules and small hardware-specific boundaries. The per-board headless metal source selection is approximately 14.6–17.9k lines, including that shared code. Lean adds 10,744 selected networking and support lines.</p>
-    <details class="architecture-details"><summary>What these numbers include <span>scope and provenance</span></summary><div class="architecture-body"><p>Counted from the v2.2.2 source with <code>tools/loc.go</code> on 6 September 2026: nonblank, noncomment Go and assembly lines in the selected source files. These are source-file counts, not a count of every linked dependency or executed instruction. Go’s runtime and standard library, TamaGo, HOP and other dependencies are outside the metal/Lean figures; desktop apps are separate.</p><p>The approximately 4000 MB/s M4 write result was reported by the developer. Workload, cache policy and durability conditions were not recorded in the review, so it is an indicative measurement rather than a cross-platform benchmark.</p><a href="/hopos/docs/#measurements">Measurements and conditions →</a></div></details>
+    <p>No VM, no WASM, no interpreter, no container: an app runs natively on its own cores at full clock speed, and the kernel is one hop away over a ring. The numbers above are single runs on real boards; the measurements page keeps the spread per board, the command and the console marker for each.</p>
+    <details class="architecture-details"><summary>What these numbers include <span>scope and provenance</span></summary><div class="architecture-body"><p>App to app: one app pulls 800 MiB from another on the same Mac mini M4 through the kernel’s switch, on a performance core, measured on 1 October 2026 at 6,379 and 6,383 MB/s; 40 GiB sustained at 2,813 MB/s. Storage: the raw NVMe benchmark at boot on the M4’s Apple NVMe with 1 MiB commands over 16 MiB wrote 4,952 and read 1,925 MB/s; through the full app storage path, 256 MiB in 1 MiB calls, an app wrote 1,270 and read 1,690 MB/s. Random 4 KiB reads with sixteen commands in flight reached 175,055 per second raw in the kernel; through the app path, four apps together read 25,000 and eight apps 36,000 blocks per second, one call per app at a time. Smaller boards: app to app 407–435 MB/s on a Raspberry Pi 4 and 257–262 MB/s on a Radxa Zero 3E at its firmware clock of 816 MHz. These are short completed-I/O measurements; sustained throughput and power-loss durability were not measured.</p><a href="/hopos/docs/#measurements">Measurements and conditions →</a></div></details>
   </div></section>
   <section id="fit" class="use-section">
     <div class="wrap">
@@ -105,12 +105,12 @@
       <div class="use-modes">
         <article>
           <p class="use-label">one machine</p>
-          <h3>Put your programs on it and power on.</h3>
-          <p>Jobs in <a href="/hopos/docs/#configuration"><code>hopos.init[]</code></a> live on the boot medium. Without S3, every boot is clean: HopOS starts that exact set of Go apps again.</p>
-          <div class="use-flow" aria-label="The boot medium starts HopOS, which starts your apps">
-            <span>boot medium</span><i>→</i><b>HopOS</b><i>→</i><span>your apps</span>
+          <h3>Post a job. The node runs it.</h3>
+          <p>HOP is built into the node as a standalone leader. Post a job spec to its API, and the kernel places the app, publishes its port and keeps it running. HOP keeps its state on the node’s own storage and reads it back after a restart.</p>
+          <div class="use-flow" aria-label="A job spec goes to HOP on the node, which places the app">
+            <span>job spec</span><i>→</i><b>HOP on the node</b><i>→</i><span>your app</span>
           </div>
-          <small>no S3 · no cluster required</small>
+          <small>no external store · no cluster required</small>
         </article>
 
         <div class="use-or" aria-hidden="true">or</div>
@@ -118,9 +118,9 @@
         <article>
           <p class="use-label">a fleet</p>
           <h3>Keep the truth outside every machine.</h3>
-          <p>HOP commits the desired cluster state to one object in S3. Each HopOS node reads that shared state and reconstructs its own jobs after a reboot.</p>
-          <div class="use-flow" aria-label="HOP commits shared state to S3 for every HopOS node">
-            <span>HOP</span><i>→</i><b>S3 state</b><i>→</i><span>every node</span>
+          <p>Name a lock in the node config, and HopOS nodes and Linux or macOS agents form one cluster: one lease on a hoplockserver or in an S3 bucket, one committed cluster state next to it, and whichever node holds the lease leads.</p>
+          <div class="use-flow" aria-label="HOP commits shared state to a lock store for every node">
+            <span>HOP</span><i>→</i><b>lease + state</b><i>→</i><span>every node</span>
           </div>
           <small>shared state · replaceable machines</small>
         </article>
@@ -129,10 +129,10 @@
   </section>
 
   <section id="apps" class="apps-section"><div class="wrap">
-    <p class="section-kicker">Software running on the framework</p><h2>Go-only does not mean starting every app from scratch.</h2>
-    <p class="section-lede">A service, a tunnel, a home controller or a desktop: the app model stays the same. Each image includes its own Go runtime and the packages it needs.</p>
-<div class="capability-grid"><article><p class="section-kicker">Home automation</p><h3>Stulp</h3><p>A Go home controller with device integrations, running on HopOS. <a href="https://github.com/xinix00/stulp">Explore Stulp →</a></p></article><article><p class="section-kicker">Connectivity</p><h3>cloudflared</h3><p>Cloudflare’s Go tunnel client, adapted as a HopOS app. The repository includes standard and Lean variants. <a href="https://github.com/xinix00/HopOS/tree/main/apps">Browse the apps →</a></p></article><article><p class="section-kicker">Cluster services</p><h3>Routing, DNS and metrics.</h3><p>hoplb, hopdns and hopprom provide load balancing, discovery and Prometheus integration as separate applications. <a href="/hop/">See the HOP workflow →</a></p></article><article><p class="section-kicker">Display</p><h3>SURF</h3><p>A compositor, task manager, browser and Game Boy emulator running as apps. Windows can come from different nodes. <a href="/surf/">See the desktop →</a></p></article></div>
-    <p class="deep-link">Go libraries still need compatible platform assumptions: arbitrary Linux binaries are not HopOS apps. <a href="/hopos/docs/#apps">Build and run your own Go app →</a></p>
+    <p class="section-kicker">Software running on the kernel</p><h2>Rust or Go. One app model.</h2>
+    <p class="section-lede">An app is one ELF that speaks the slot ABI. A Rust app links against a small app library with its own network stack; a Go app builds with the TamaGo toolchain against the Go SDK. Both produce the same kind of image, placed by the same job spec.</p>
+<div class="capability-grid"><article><p class="section-kicker">In the tree</p><h3>The Rust apps.</h3><p>A welcome page, a network bench, a board doctor that runs the performance tests, a display app for the screen, a decoder for the hardware codec, and a Cloudflare tunnel client whose loaded image is 530 kB. <a href="https://github.com/xinix00/HopOS/tree/main/apps">Browse the apps →</a></p></article><article><p class="section-kicker">Go apps</p><h3>Stulp and the TamaGo apps.</h3><p>A Go home controller with device integrations, plus the Go builds of welcome, vitals and cloudflared, run through the same ABI as the Rust apps. <a href="/hopos/docs/#go-apps">Build a Go app for v3 →</a></p></article><article><p class="section-kicker">Cluster services</p><h3>Routing, DNS, metrics and locks.</h3><p>hoplb, hopdns, hopprom, hoplockserver and the HOP GUI are Rust apps at v3.0.0. They run on a node or on a host next to HOP. <a href="/hop/">See the HOP workflow →</a></p></article><article><p class="section-kicker">Storage</p><h3>SQLite on HopFS.</h3><p>Replica links native SQLite into a no_std app over the kernel’s file calls, with a confirmed sync barrier. The full persistence proof, write, restart, recover and repair, takes about 0.2 s on the M4. <a href="/hopos/docs/#storage-sync">Read the barrier contract →</a></p></article></div>
+    <p class="deep-link">A display, a browser and an emulator run as apps too; windows can come from different nodes. <a href="/surf/">See the desktop →</a></p>
   </div></section>
 
   <section id="hardware">
@@ -140,16 +140,17 @@
       <div>
         <p class="section-kicker">Where it runs</p>
         <h2>From a tiny board to a many-core server.</h2>
-        <p class="section-lede">Apps are built once per architecture, not once per board. HopOS supplies the board-specific boot and drivers underneath. On UEFI machines and the Mac mini M4, its own bootloader takes over from the platform firmware — no GRUB in between.</p>
+        <p class="section-lede">Apps are built once per architecture, not once per board. The kernel binary picks exactly one board, which supplies boot and device wiring. On UEFI machines its own EFI stub takes over from the firmware, and on the Mac mini M4 it boots from iBoot — no GRUB in between.</p>
       </div>
       <div class="machine-list">
-        <span><b>Ampere Altra</b><small>128-core reference · UEFI</small></span>
-        <span><b>Raspberry Pi 4 + 5</b><small>arm64</small></span>
-        <span><b>Radxa Zero 3E</b><small>arm64 + GUI</small></span>
-        <span><b>Radxa Orion O6N</b><small>arm64 · UEFI</small></span>
-        <span><b>LicheeRV Nano</b><small>riscv64 · compact 256 MB board</small></span>
-        <span><b>Mac mini M4</b><small>iBoot → HopOS bootloader</small></span>
-        <span><b>UEFI arm64</b><small>firmware → HopOS bootloader · hardware + QEMU</small></span>
+        <span><b>Raspberry Pi 5</b><small>arm64 · GUI</small></span>
+        <span><b>Raspberry Pi 4</b><small>arm64 · GUI</small></span>
+        <span><b>Radxa Zero 3E</b><small>arm64 · GUI</small></span>
+        <span><b>Radxa Orion O6N</b><small>arm64 · NVMe · hardware codec · GUI</small></span>
+        <span><b>Mac mini M4</b><small>arm64 · NVMe</small></span>
+        <span><b>Ampere Altra</b><small>arm64 · NVMe · GUI</small></span>
+        <span><b>LicheeRV Nano</b><small>riscv64</small></span>
+        <span><b>UEFI arm64</b><small>arm64 · GUI</small></span>
       </div>
     </div>
   </section>
@@ -160,7 +161,7 @@
         <div>
           <p class="section-kicker">Try it</p>
           <h2>Write a card. Power on.</h2>
-          <p class="section-lede">The HopOS Imager downloads the latest signed release, writes and verifies the card, keeps config during updates and finds the node on your network.</p>
+          <p class="section-lede">The HopOS Imager downloads the newest signed release, writes and verifies the card, keeps config during updates and finds the node on your network.</p>
         </div>
         <div class="download-actions">
           <a class="btn btn-primary" href="https://github.com/xinix00/hop-imager/releases/download/rolling-release/hop-imager-macos-universal.zip">download for macOS</a>
@@ -173,30 +174,31 @@
         <div>
           <span>on hardware</span>
           <ol>
-            <li>Choose Desktop or Headless and your board.</li>
+            <li>Choose Desktop, Headless or Media and your board.</li>
             <li>Write and verify a USB stick or SD card.</li>
             <li>Power on. FIND shows the node and its boot log.</li>
           </ol>
         </div>
         <div>
-          <span>without hardware</span>
+          <span>from source, without hardware</span>
           <div class="term term-cli">
             <pre><span class="ps">$</span> git clone https://github.com/xinix00/HopOS
 <span class="ps">$</span> cd HopOS
-<span class="ps">$</span> ./image/uefi-run.sh agent
-<span class="out">HOPOS_AGENT_UP</span></pre>
+<span class="ps">$</span> sh image/qemu-run.sh
+<span class="out">HOP_UP</span></pre>
           </div>
         </div>
       </div>
 
       <details class="direct-downloads">
         <summary>Prefer a direct image?</summary>
-        <p>Each file is the complete medium. GUI boots the SURF desktop; Headless contains no graphics code.</p>
+        <p>Each file is the complete medium. GUI boots with the screen, Headless contains no graphics code, Media adds the hardware codec. The links resolve to the newest signed release; v3 images for every board build from the repository with one script each, and <code>rust-toolchain.toml</code> pins the compiler.</p>
         <div class="image-links">
-          <div><b>UEFI arm64 / Ampere Altra</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-uefi.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-uefi-headless.img.gz">Headless</a></div>
           <div><b>Raspberry Pi 5</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-rpi5.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-rpi5-headless.img.gz">Headless</a></div>
           <div><b>Raspberry Pi 4</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-rpi4.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-rpi4-headless.img.gz">Headless</a></div>
           <div><b>Radxa Zero 3E</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-radxa-zero3.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-radxa-zero3-headless.img.gz">Headless</a></div>
+          <div><b>Radxa Orion O6N</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-o6n.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-o6n-headless.img.gz">Headless</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-o6n-media.img.gz">Media</a></div>
+          <div><b>Ampere Altra</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-altra.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-altra-headless.img.gz">Headless</a></div>
           <div><b>LicheeRV Nano</b><span>—</span><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-licheerv-headless.img.gz">Headless</a></div>
           <div><b>Mac mini M4</b><span>—</span><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-m4-headless.img.gz">Headless</a></div>
         </div>
@@ -216,7 +218,7 @@
     <pre>   (\(\
    ( -.-)     HopOS
    o_(")(")   --------------
-              the Go-only OS</pre>
+              bare metal, in Rust</pre>
     <div class="foot-links">
       <a class="l-hopos" href="https://github.com/xinix00/HopOS">github.com/xinix00/HopOS</a>
       <a class="l-surf" href="/surf/">SURF · the GUI for HopOS</a>

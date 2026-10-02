@@ -4,32 +4,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>gethop.org — HopOS · HOP · SURF</title>
-<meta name="description" content="Three small things for people who run their own metal: HopOS runs Go directly on hardware, HOP orchestrates the cluster, and SURF puts windows from many machines on one screen.">
+<meta name="description" content="Three small things for people who run their own metal: HopOS runs apps directly on hardware with one Rust binary as the OS, HOP orchestrates the cluster, and SURF puts windows from many machines on one screen.">
 <meta property="og:title" content="gethop.org — HopOS · HOP · SURF">
-<meta property="og:description" content="A Go operating system, a small orchestrator and a distributed desktop. Run the machine, run the jobs, bring them to the screen.">
+<meta property="og:description" content="An operating system written in Rust, a small orchestrator and a distributed desktop. Run the machine, run the jobs, bring them to the screen.">
 <meta property="og:url" content="https://gethop.org">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=12">
+<link rel="stylesheet" href="/style.css?v=14">
 </head>
 <body class="pg-hopos home-overview">
 <nav class="topbar"><div class="wrap topbar-in"><a class="brand" href="/"><span class="ears">(\(\</span> gethop.org</a><div class="home-nav"><a href="/hopos/">HopOS</a><a href="/hop/">HOP</a><a href="/surf/">SURF</a></div></div></nav>
 <main>
 <header class="hero"><div class="wrap">
 <p class="pg-mark">HopOS / HOP / SURF</p><h1>Run the machine.<br>Run the jobs.<br><span class="home-soft">Bring them to the screen.</span></h1>
-<p class="lede">A Go operating system, a small orchestrator and a distributed desktop. Each has a clear job. Together, they take you from bare hardware to running services and windows across machines.</p>
+<p class="lede">An operating system written in Rust, a small orchestrator and a distributed desktop. Each has a clear job. Together, they take you from bare hardware to running services and windows across machines.</p>
 <div class="cta-row"><a class="btn btn-primary" href="/hopos/">Explore HopOS →</a><a class="btn btn-ghost" href="/hopos/docs/">Read the documentation</a></div>
 </div></header>
 <section class="home-products"><div class="wrap family-cards">
-<a class="family-card card-os" href="/hopos/"><span class="section-kicker">01 / The machine</span><h2>HopOS</h2><h3>Compute, with fewer moving parts.</h3><p>Go directly on ARM64 and RISC-V. Own memory for every app, dedicated or trusted shared cores, and kernel updates while resident apps keep running.</p><span class="card-detail">One framework · Go apps · zero-reboot FLIP</span><span class="go">How HopOS works →</span></a>
-<a class="family-card card-hop" href="/hop/"><span class="section-kicker">02 / The jobs</span><h2>HOP</h2><h3>One job model across your machines.</h3><p>Place processes, Docker containers and HopOS apps. Schedule, update, inspect and recover jobs through one API, with the agent and leader in one Go program.</p><span class="card-detail">Placement · health checks · recovery</span><span class="go">What HOP can run →</span></a>
+<a class="family-card card-os" href="/hopos/"><span class="section-kicker">01 / The machine</span><h2>HopOS</h2><h3>Compute, with fewer moving parts.</h3><p>One static Rust binary on ARM64 and RISC-V. Own memory for every app, dedicated or trusted shared cores, and kernel updates while resident apps keep running. Write an app in Rust or in Go: both speak the same ABI.</p><span class="card-detail">One kernel · Rust and Go apps · in-place kernel flip</span><span class="go">How HopOS works →</span></a>
+<a class="family-card card-hop" href="/hop/"><span class="section-kicker">02 / The jobs</span><h2>HOP</h2><h3>One job model across your machines.</h3><p>Place processes, Docker containers and HopOS apps. Schedule, update, inspect and recover jobs through one API, with the agent and leader in one Rust program that also runs as the first resident of a HopOS node.</p><span class="card-detail">Placement · health checks · recovery</span><span class="go">What HOP can run →</span></a>
 <a class="family-card card-surf" href="/surf/"><span class="section-kicker">03 / The screen</span><h2>SURF</h2><h3>Windows from anywhere in the cluster.</h3><p>Apps draw on one machine; a display app composites their windows on another. A desktop, browser and emulator built above the same app framework.</p><span class="card-detail">Pixel and scene apps · networked display</span><span class="go">See SURF in action →</span></a>
 </div></section>
 <section><div class="wrap intro-grid"><div><p class="section-kicker">How they fit</p><h2>Start with the piece you need.</h2></div><div class="intro-copy"><p>Boot HopOS with a configured set of jobs on one board. Run HOP on your existing Linux or macOS hosts, or use the HOP agent integrated into HopOS. Add SURF when your applications need windows.</p><p>The common idea is small, explicit ownership: a memory partition, a job lifecycle, a window. The pages follow those boundaries from features to implementation and source.</p></div></div></section>
 <section class="home-proof"><div class="wrap"><p class="section-kicker">Things worth a closer look</p><div class="proof-links">
 <a href="/hopos/#architecture"><b>One doorbell per resident.</b><span>Follow the network path from receive ring to runnable work.</span></a>
-<a href="/hopos/#different"><b>A running kernel can change.</b><span>See how FLIP keeps apps in their existing memory.</span></a>
-<a href="/hopos/#apps"><b>Existing Go code comes along.</b><span>Tunnels, home automation, cluster services and a desktop.</span></a>
+<a href="/hopos/#different"><b>A running kernel can change.</b><span>See how the flip keeps apps, connections and volumes in place.</span></a>
+<a href="/hopos/#apps"><b>Rust or Go, same app.</b><span>One app ABI for both languages; tunnels, home automation and cluster services run on it.</span></a>
 </div></div></section>
 </main>
 <footer><div class="wrap foot-links"><a href="https://github.com/xinix00/HopOS">HopOS source</a><a href="https://github.com/xinix00/hop">HOP source</a><a href="https://github.com/xinix00/hop-os-surf">SURF source</a><a href="https://gui.gethop.org">Cluster GUI</a><a href="mailto:hello@gethop.org">hello@gethop.org</a></div><div class="wrap"><p class="foot-copy">© 2026 gethop.org</p></div></footer>

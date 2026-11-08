@@ -1,6 +1,6 @@
 # Update — 2 October 2026: HopOS v3 and HOP v3 in Rust
 
-The site now describes the Rust generation: HopOS v3 (`xinix00/HopOS` main, `Cargo.toml` workspace 3.0.0, tags up to `v3.0.0-alpha.18`) and HOP v3 (`xinix00/hop` main, 3.0.0). The Go generations live in `OLD/` in both repositories and are still the newest signed releases (HopOS v2.2.8, HOP v1.0.7); the download sections say that the links resolve to the newest signed release and that v3 builds from source. SURF is unchanged on the site.
+The site now describes the Rust generation: HopOS v3 (`hop-os/HopOS` main, `Cargo.toml` workspace 3.0.0, tags up to `v3.0.0-alpha.18`) and HOP v3 (`hop-os/hop` main, 3.0.0). The Go generations live in `OLD/` in both repositories and are still the newest signed releases (HopOS v2.2.8, HOP v1.0.7); the download sections say that the links resolve to the newest signed release and that v3 builds from source. SURF is unchanged on the site.
 
 Claim sources:
 

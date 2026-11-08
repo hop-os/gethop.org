@@ -131,7 +131,7 @@
   <section id="apps" class="apps-section"><div class="wrap">
     <p class="section-kicker">Software running on the kernel</p><h2>Rust or Go. One app model.</h2>
     <p class="section-lede">An app is one ELF that speaks the slot ABI. A Rust app links against a small app library with its own network stack; a Go app builds with the TamaGo toolchain against the Go SDK. Both produce the same kind of image, placed by the same job spec.</p>
-<div class="capability-grid"><article><p class="section-kicker">In the tree</p><h3>The Rust apps.</h3><p>A welcome page, a network bench, a board doctor that runs the performance tests, a display app for the screen, a decoder for the hardware codec, and a Cloudflare tunnel client whose loaded image is 530 kB. <a href="https://github.com/xinix00/HopOS/tree/main/apps">Browse the apps →</a></p></article><article><p class="section-kicker">Go apps</p><h3>Stulp and the TamaGo apps.</h3><p>A Go home controller with device integrations, plus the Go builds of welcome, vitals and cloudflared, run through the same ABI as the Rust apps. <a href="/hopos/docs/#go-apps">Build a Go app for v3 →</a></p></article><article><p class="section-kicker">Cluster services</p><h3>Routing, DNS, metrics and locks.</h3><p>hoplb, hopdns, hopprom, hoplockserver and the HOP GUI are Rust apps at v3.0.0. They run on a node or on a host next to HOP. <a href="/hop/">See the HOP workflow →</a></p></article><article><p class="section-kicker">Storage</p><h3>SQLite on HopFS.</h3><p>Replica links native SQLite into a no_std app over the kernel’s file calls, with a confirmed sync barrier. The full persistence proof, write, restart, recover and repair, takes about 0.2 s on the M4. <a href="/hopos/docs/#storage-sync">Read the barrier contract →</a></p></article></div>
+<div class="capability-grid"><article><p class="section-kicker">In the tree</p><h3>The Rust apps.</h3><p>A welcome page, a network bench, a board doctor that runs the performance tests, a display app for the screen, a decoder for the hardware codec, and a Cloudflare tunnel client whose loaded image is 530 kB. <a href="https://github.com/hop-os/HopOS/tree/main/apps">Browse the apps →</a></p></article><article><p class="section-kicker">Go apps</p><h3>Stulp and the TamaGo apps.</h3><p>A Go home controller with device integrations, plus the Go builds of welcome, vitals and cloudflared, run through the same ABI as the Rust apps. <a href="/hopos/docs/#go-apps">Build a Go app for v3 →</a></p></article><article><p class="section-kicker">Cluster services</p><h3>Routing, DNS, metrics and locks.</h3><p>hoplb, hopdns, hopprom, hoplockserver and the HOP GUI are Rust apps at v3.0.0. They run on a node or on a host next to HOP. <a href="/hop/">See the HOP workflow →</a></p></article><article><p class="section-kicker">Storage</p><h3>SQLite on HopFS.</h3><p>Replica links native SQLite into a no_std app over the kernel’s file calls, with a confirmed sync barrier. The full persistence proof, write, restart, recover and repair, takes about 0.2 s on the M4. <a href="/hopos/docs/#storage-sync">Read the barrier contract →</a></p></article></div>
     <p class="deep-link">A display, a browser and an emulator run as apps too; windows can come from different nodes. <a href="/surf/">See the desktop →</a></p>
   </div></section>
 
@@ -164,9 +164,9 @@
           <p class="section-lede">The HopOS Imager downloads the newest signed release, writes and verifies the card, keeps config during updates and finds the node on your network.</p>
         </div>
         <div class="download-actions">
-          <a class="btn btn-primary" href="https://github.com/xinix00/hop-imager/releases/download/rolling-release/hop-imager-macos-universal.zip">download for macOS</a>
-          <a class="btn btn-ghost" href="https://github.com/xinix00/hop-imager/releases/download/rolling-release/hop-imager-linux-amd64.tar.gz">Linux</a>
-          <a class="btn btn-ghost" href="https://github.com/xinix00/hop-imager/releases/download/rolling-release/hop-imager-windows-amd64.zip">Windows</a>
+          <a class="btn btn-primary" href="https://github.com/hop-os/hop-imager/releases/download/rolling-release/hop-imager-macos-universal.zip">download for macOS</a>
+          <a class="btn btn-ghost" href="https://github.com/hop-os/hop-imager/releases/download/rolling-release/hop-imager-linux-amd64.tar.gz">Linux</a>
+          <a class="btn btn-ghost" href="https://github.com/hop-os/hop-imager/releases/download/rolling-release/hop-imager-windows-amd64.zip">Windows</a>
         </div>
       </div>
 
@@ -182,7 +182,7 @@
         <div>
           <span>from source, without hardware</span>
           <div class="term term-cli">
-            <pre><span class="ps">$</span> git clone https://github.com/xinix00/HopOS
+            <pre><span class="ps">$</span> git clone https://github.com/hop-os/HopOS
 <span class="ps">$</span> cd HopOS
 <span class="ps">$</span> sh image/qemu-run.sh
 <span class="out">HOP_UP</span></pre>
@@ -194,20 +194,20 @@
         <summary>Prefer a direct image?</summary>
         <p>Each file is the complete medium. GUI boots with the screen, Headless contains no graphics code, Media adds the hardware codec. The links resolve to the newest signed release; v3 images for every board build from the repository with one script each, and <code>rust-toolchain.toml</code> pins the compiler.</p>
         <div class="image-links">
-          <div><b>Raspberry Pi 5</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-rpi5.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-rpi5-headless.img.gz">Headless</a></div>
-          <div><b>Raspberry Pi 4</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-rpi4.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-rpi4-headless.img.gz">Headless</a></div>
-          <div><b>Radxa Zero 3E</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-radxa-zero3.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-radxa-zero3-headless.img.gz">Headless</a></div>
-          <div><b>Radxa Orion O6N</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-o6n.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-o6n-headless.img.gz">Headless</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-o6n-media.img.gz">Media</a></div>
-          <div><b>Ampere Altra</b><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-altra.img.gz">GUI</a><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-altra-headless.img.gz">Headless</a></div>
-          <div><b>LicheeRV Nano</b><span>—</span><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-licheerv-headless.img.gz">Headless</a></div>
-          <div><b>Mac mini M4</b><span>—</span><a href="https://github.com/xinix00/HopOS/releases/latest/download/hopos-m4-headless.img.gz">Headless</a></div>
+          <div><b>Raspberry Pi 5</b><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-rpi5.img.gz">GUI</a><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-rpi5-headless.img.gz">Headless</a></div>
+          <div><b>Raspberry Pi 4</b><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-rpi4.img.gz">GUI</a><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-rpi4-headless.img.gz">Headless</a></div>
+          <div><b>Radxa Zero 3E</b><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-radxa-zero3.img.gz">GUI</a><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-radxa-zero3-headless.img.gz">Headless</a></div>
+          <div><b>Radxa Orion O6N</b><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-o6n.img.gz">GUI</a><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-o6n-headless.img.gz">Headless</a><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-o6n-media.img.gz">Media</a></div>
+          <div><b>Ampere Altra</b><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-altra.img.gz">GUI</a><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-altra-headless.img.gz">Headless</a></div>
+          <div><b>LicheeRV Nano</b><span>—</span><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-licheerv-headless.img.gz">Headless</a></div>
+          <div><b>Mac mini M4</b><span>—</span><a href="https://github.com/hop-os/HopOS/releases/latest/download/hopos-m4-headless.img.gz">Headless</a></div>
         </div>
       </details>
 
       <div class="final-links">
         <a href="/hopos/docs/">read the docs →</a>
-        <a href="https://github.com/xinix00/HopOS">read the source →</a>
-        <a href="https://github.com/xinix00/HopOS/releases/latest">verify the latest release →</a>
+        <a href="https://github.com/hop-os/HopOS">read the source →</a>
+        <a href="https://github.com/hop-os/HopOS/releases/latest">verify the latest release →</a>
       </div>
     </div>
   </section>
@@ -220,7 +220,7 @@
    o_(")(")   --------------
               bare metal, in Rust</pre>
     <div class="foot-links">
-      <a class="l-hopos" href="https://github.com/xinix00/HopOS">github.com/xinix00/HopOS</a>
+      <a class="l-hopos" href="https://github.com/hop-os/HopOS">github.com/hop-os/HopOS</a>
       <a class="l-surf" href="/surf/">SURF · the GUI for HopOS</a>
       <a class="l-hop" href="/hop/">HOP · the orchestrator</a>
       <a href="https://gui.gethop.org">gui.gethop.org</a>

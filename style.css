@@ -346,7 +346,7 @@ footer pre {
 
 /* ── docs-viewer ─────────────────────────────────────────── */
   .docs-grid { display: grid; grid-template-columns: 220px 1fr; gap: 48px; padding: 48px 0 80px; }
-  @media (max-width: 800px) { .docs-grid { grid-template-columns: 1fr; gap: 24px; } }
+  @media (max-width: 800px) { .docs-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
   .docs-nav { position: sticky; top: 80px; align-self: start; font-family: var(--mono); font-size: 13.5px; }
   @media (max-width: 800px) { .docs-nav { position: static; } }
   .pages-box, .pages-btn { display: none; }
@@ -395,7 +395,8 @@ footer pre {
     padding: 16px 18px; overflow-x: auto; margin: 0 0 18px;
     font-family: var(--mono); font-size: 13px; line-height: 1.6;
   }
-  .md pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+  .md code { overflow-wrap: anywhere; }
+  .md pre code { background: none; border: 0; padding: 0; font-size: inherit; overflow-wrap: normal; }
   .md table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 0 0 18px; }
   .md .md-tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 5px; margin: 0 0 18px; }
   .md .md-tbl table { margin: 0; min-width: 540px; }

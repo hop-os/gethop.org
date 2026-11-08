@@ -10,7 +10,7 @@
 <meta property="og:url" content="https://gethop.org/hop/">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐇</text></svg>">
-<link rel="stylesheet" href="/style.css?v=14">
+<link rel="stylesheet" href="/style.css?v=15">
 </head>
 <body class="pg-hop hop-overview">
 
@@ -118,7 +118,7 @@
           <a href="/hopos/">meet HopOS →</a>
         </article>
       </div>
-      <p class="deep-link">One job may contain builds for several architectures; each agent downloads the first artifact that matches its node.</p>
+      <p class="deep-link">One job may contain builds for several architectures; each agent downloads the first artifact that matches its node, over HTTP(S) or from an S3 bucket.</p>
     </div>
   </section>
 
@@ -185,11 +185,11 @@
             <strong>17.3 s</strong>
             <div>
               <h3>power back → 126 jobs running again</h3>
-              <p>Measured on the 128-core Ampere Altra with the previous generation of HopOS and HOP. This is the complete cold path — firmware, HopOS, HOP recovery and app start — not the lease timeout of a live leader failover. The v3 figure follows with the Altra bring-up.</p>
+              <p>Measured on the 128-core Ampere Altra with the previous generation of HopOS and HOP. This is the complete cold path — firmware, HopOS, HOP recovery and app start — not the lease timeout of a live leader failover. A figure for the Rust generation has not been measured yet.</p>
             </div>
           </div>
 
-          <p class="architecture-doc-link"><a href="/hop/docs/#architecture">Read the full election and state design →</a></p>
+          <p class="architecture-doc-link"><a href="/hop/docs/#README:een-cluster-van-hopos-nodes">Read the full election and state design →</a></p>
         </div>
       </details>
     </div>
@@ -222,7 +222,7 @@
     </div>
   </section>
 
-  <section id="features"><div class="wrap"><p class="section-kicker">A complete job lifecycle</p><h2>The operations you use every day.</h2><div class="capability-grid"><article><p class="section-kicker">Placement</p><h3>Tell it what the job needs.</h3><p>Instance counts, CPU and memory requests, node affinity and architecture-specific artifacts guide placement. On HopOS, resource ownership reaches down to app cores and memory partitions.</p></article><article><p class="section-kicker">Changes</p><h3>Choose how a job is replaced.</h3><p>Rolling, recreate and blue-green update strategies are part of the job model. Health checks and restart policies govern recovery; live logs travel through the same API.</p></article><article><p class="section-kicker">Visibility</p><h3>Use the CLI or the browser.</h3><p>Inspect agents, jobs and tasks, follow logs and apply changes. The hosted GUI connects to your cluster API. Discovery, routing and metrics remain separate, reusable services.</p></article><article><p class="section-kicker">Recovery</p><h3>Keep desired state outside the node.</h3><p>With S3 persistence configured, a new leader reloads committed jobs and reconciles them with what agents still run. The external store must support the lease backend’s conditional-write semantics.</p></article></div><p class="deep-link">HOP can run on existing Linux and macOS hosts. On HopOS it is integrated into the node; SURF’s launcher and task manager are clients of its API. <a href="/surf/">See that API on a desktop →</a></p></div></section>
+  <section id="features"><div class="wrap"><p class="section-kicker">A complete job lifecycle</p><h2>The operations you use every day.</h2><div class="capability-grid"><article><p class="section-kicker">Placement</p><h3>Tell it what the job needs.</h3><p>Instance counts, CPU and memory requests, node affinity and architecture-specific artifacts guide placement. On HopOS, resource ownership reaches down to app cores and memory partitions.</p></article><article><p class="section-kicker">Changes</p><h3>Choose how a job is replaced.</h3><p>Rolling, recreate and blue-green update strategies are part of the job model. Health checks and restart policies govern recovery; live logs travel through the same API. On HopOS, HOP restarts itself, with the same image or a new one, under its running apps.</p></article><article><p class="section-kicker">Visibility</p><h3>Use the CLI or the browser.</h3><p>Inspect agents, jobs and tasks, follow logs and apply changes. The hosted GUI connects to your cluster API. Discovery, routing and metrics remain separate, reusable services.</p></article><article><p class="section-kicker">Recovery</p><h3>Keep desired state outside the node.</h3><p>With S3 persistence configured, a new leader reloads committed jobs and reconciles them with what agents still run. The external store must support the lease backend’s conditional-write semantics.</p></article></div><p class="deep-link">HOP can run on existing Linux and macOS hosts. On HopOS it is integrated into the node; SURF’s launcher and task manager are clients of its API. <a href="/surf/">See that API on a desktop →</a></p></div></section>
   <section id="operate">
     <div class="wrap operate-grid">
       <div>
@@ -242,9 +242,9 @@
 
 <span class="ps">$</span> hop agents
 <span class="cmt">ID       ENDPOINT             VERSION  TEMP    LAST SEEN</span>
-o6n-1    192.168.1.205:8080   3.0.0    39.0°C  19:41:02
-pi5-1    192.168.1.207:8080   3.0.0    57.0°C  19:41:04
-linux-2  10.0.0.12:8080       3.0.0    -       19:41:03</pre>
+o6n-1    192.168.1.205:8080   3.0.18   39.0°C  19:41:02
+pi5-1    192.168.1.207:8080   3.0.18   57.0°C  19:41:04
+linux-2  10.0.0.12:8080       3.0.18   -       19:41:03</pre>
       </div>
     </div>
   </section>
@@ -255,7 +255,7 @@ linux-2  10.0.0.12:8080       3.0.0    -       19:41:03</pre>
         <div>
           <p class="section-kicker">Try it</p>
           <h2>Download one archive.</h2>
-          <p class="section-lede">Each archive contains the node and control plane daemon plus the CLI. The links always resolve to the newest signed release; v3 builds from the repository with <code>cargo build --release -p agentd -p cli</code>.</p>
+          <p class="section-lede">Each archive contains the node and control plane daemon plus the CLI. The links resolve to the newest release; release candidates of the next version are listed with the releases. From the repository: <code>cargo build --release -p agentd -p cli</code>.</p>
         </div>
         <div class="download-actions hop-download-actions">
           <a class="btn btn-primary" href="https://github.com/hop-os/hop/releases/latest/download/hop-linux-amd64.tar.gz">Linux · amd64</a>
@@ -266,8 +266,8 @@ linux-2  10.0.0.12:8080       3.0.0    -       19:41:03</pre>
 
       <div class="download-contents">
         <div><span>agentd</span><p>agent · leader candidate · scheduler · HTTP API</p></div>
-        <div><span>hop</span><p>CLI for jobs, agents, logs, events and the kernel flip</p></div>
-        <div><span>checksums</span><p><a href="https://github.com/hop-os/hop/releases/latest/download/checksums.txt">verify the downloaded archive →</a></p></div>
+        <div><span>hop</span><p>CLI for jobs, agents, logs and events, the kernel flip, a HOP restart and HopOS images</p></div>
+        <div><span>checksums</span><p><a href="https://github.com/hop-os/hop/releases/latest/download/SHA256SUMS">verify the downloaded archive →</a></p></div>
       </div>
       <div class="final-links">
         <a href="/hop/docs/">read the setup guide →</a>

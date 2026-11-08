@@ -132,7 +132,19 @@ en `/hop/docs/` op 1440 px en op 390 px (devtools, of Chrome headless). Op
 1. Zet bovenaan [PROPOSAL.md](PROPOSAL.md) een sectie
    `# Update — <datum>: <onderwerp>` met: welke versies de site nu beschrijft,
    per bewering die veranderde de bron, en wat de controle gaf.
-2. Commit in het Nederlands, zoals de geschiedenis. GitHub Pages publiceert
-   `main` vanzelf; `CNAME` kiest gethop.org.
-3. Kijk na het pushen op https://gethop.org of de pagina's de nieuwe tekst
-   tonen (Pages heeft een minuut nodig).
+2. Commit in het Nederlands, zoals de geschiedenis, en push `main`.
+3. Kijk na het pushen of gethop.org de nieuwe tekst toont, met een zin die
+   je net veranderde:
+
+   ```sh
+   curl -s https://gethop.org/hopos/ | grep -c '<nieuwe zin>'
+   ```
+
+   gethop.org staat achter Cloudflare, en wat daar live staat komt
+   (8 november gezien) van het Cloudflare Pages-project dat ook op
+   `gethop-org.pages.dev` staat, niet van GitHub Pages. GitHub Pages bouwt
+   `main` wel (`gh run list -R hop-os/gethop.org -L 1`), maar dat is niet
+   wat bezoekers zien. Toont gethop.org na een paar minuten de oude tekst,
+   kijk dan in Cloudflare (Workers & Pages, het project van gethop.org) of
+   het nog aan deze repo hangt en of er een deploy liep; met de hand:
+   `wrangler pages deploy . --project-name gethop-org --branch main`.
